@@ -1,0 +1,17 @@
+# Ignore files.
+
+desktop.ini
+thumbs.db
+
+.vs/
+.vscode/
+.svn/
+.jj/
+.DS_Store
+
+~*
+.~*
+*.swp
+*.bak
+*.orig
+*.rej
