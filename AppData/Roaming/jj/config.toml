@@ -3,7 +3,8 @@ name = "MVA"
 email = "mva000@gmail.com"
 
 [ui]
-editor = ["C:\\Program Files\\Git\\usr\\bin\\vim.exe", "--literal"]
+# editor = ["C:\\Program Files\\Git\\usr\\bin\\vim.exe", "--literal"]
+editor = ["D:/progs/sakura-x64/sakura.exe"]
 pager=["C:/Program Files/Git/usr/bin/less.exe", "-FRX"]
 
 [alias]
