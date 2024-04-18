@@ -15,3 +15,7 @@ thumbs.db
 *.bak
 *.orig
 *.rej
+
+.*history
+.viminfo
+.lesshst
