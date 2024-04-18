@@ -6,6 +6,7 @@ email = "mva000@gmail.com"
 # editor = ["C:\\Program Files\\Git\\usr\\bin\\vim.exe", "--literal"]
 editor = ["D:/progs/sakura-x64/sakura.exe"]
 pager=["C:/Program Files/Git/usr/bin/less.exe", "-FRX"]
+paginate = "auto"
 
 [alias]
 alog=["log", "-r", "..@"]
@@ -13,3 +14,15 @@ clog=["log", "-T", "builtin_log_comfortable"]
 calog=["log", "-r", "..@", "-T", "builtin_log_comfortable"]
 dlog=["log", "-T", "builtin_log_detailed"]
 dalog=["log", "-r", "..@", "-T", "builtin_log_detailed"]
+olog=["log", "-T", "builtin_log_oneline"]
+oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
+
+# jj git init
+# jj git remote add origin <URL>
+# jj branch create -r @- main
+#
+# jj git init --colocate
+#
+# jj branch set -r @- main
+#
+# jj squash --from aaa:: --into bbb
