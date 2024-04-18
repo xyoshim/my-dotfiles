@@ -1,0 +1,14 @@
+[user]
+name = "MVA"
+email = "mva000@gmail.com"
+
+[ui]
+editor = ["C:\\Program Files\\Git\\usr\\bin\\vim.exe", "--literal"]
+pager=["C:/Program Files/Git/usr/bin/less.exe", "-FRX"]
+
+[alias]
+alog=["log", "-r", "..@"]
+clog=["log", "-T", "builtin_log_comfortable"]
+calog=["log", "-r", "..@", "-T", "builtin_log_comfortable"]
+dlog=["log", "-T", "builtin_log_detailed"]
+dalog=["log", "-r", "..@", "-T", "builtin_log_detailed"]
