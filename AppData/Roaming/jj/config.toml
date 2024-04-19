@@ -17,6 +17,8 @@ dalog=["log", "-r", "..@", "-T", "builtin_log_detailed"]
 olog=["log", "-T", "builtin_log_oneline"]
 oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
 
+# source <(jj util completion bash)
+#
 # jj git init
 # jj git remote add origin <URL>
 # jj branch create -r @- main
