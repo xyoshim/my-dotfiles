@@ -46,7 +46,7 @@ esac
 HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
 HISTFILE=${HOME}/.bash_history
 HISTFILESIZE=10000
-HISTIGNORE='&:ls:ll:la:fg:bg:ps:top:df:du'
+HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
 
 # alias ls='ls --color=auto'
