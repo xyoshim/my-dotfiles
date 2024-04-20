@@ -101,8 +101,6 @@ local_profile_d ()
 local_profile_d sh
 if [ ! "x${BASH_VERSION}" = "x"  ]; then
   : # HISTFILE=${HOME}/.bash_history
-  GIT_PS1_SHOWDIRTYSTATE=true && export GIT_PS1_SHOWDIRTYSTATE
-  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
   HISTFILE=${HOME}/.ksh_history && export HISTFILE
