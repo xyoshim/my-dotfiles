@@ -71,9 +71,11 @@ fi
 
 # if CYGWIN or MSYS, use Windows symbolic link
 if [ "${OSTYPE}" = "cygwin" ]; then
-  CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native" ; export CYGWIN
+  CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native" && export CYGWIN
+  EXEEXT=".exe" && export EXEEXT
 elif [ "${OSTYPE}" = "msys" ]; then
-  MSYS="${MSYS}${MSYS+ }winsymlinks:native" ; export MSYS
+  MSYS="${MSYS}${MSYS+ }winsymlinks:native" && export MSYS
+  EXEEXT=".exe" && export EXEEXT
 fi
 
 # Shell dependent settings from /usr/local/etc/profile.d
