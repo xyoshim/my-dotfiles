@@ -103,14 +103,14 @@ if [ ! "x${BASH_VERSION}" = "x"  ]; then
   : # HISTFILE=${HOME}/.bash_history
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
-  HISTFILE=${HOME}/.ksh_history
+  HISTFILE=${HOME}/.ksh_history && export HISTFILE
 elif [ ! "x${ZSH_VERSION}" = "x" ]; then
   # zsh is in shell compatibility mode here, so we probably shouldn't do this
   local_profile_d zsh
-  HISTFILE=${HOME}/.zsh_history
+  HISTFILE=${HOME}/.zsh_history && export HISTFILE
 elif [ ! "x${POSH_VERSION}" = "x" ]; then
   local_profile_d posh
-  HISTFILE=${HOME}/.posh_history
+  HISTFILE=${HOME}/.posh_history && export HISTFILE
 else
   : # [ "${PS1-null}" = "null" ] || PS1="$ "
 fi

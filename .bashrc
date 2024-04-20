@@ -28,15 +28,55 @@
 
 case "$-" in
   *i*)
-    if [ "${OSTYPE}" = "msys" ]; then
-      PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]'
-#      which __git_ps1 2> /dev/null > /dev/null
-#      if [ $? = 0 ]; then
-        PS1="${PS1}"'`__git_ps1`'
-#      fi
-      PS1="${PS1}"'\[\033[0m\]\n$ ' && export PS1
+    if [ -n "${MSYSTEM}" ]; then
+      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\e[33m\]\w\[\e[0m\]\n\$ '
+    elif [ -n "${OSTYPE}" ]; then
+      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$OSTYPE \[\e[33m\]\w\[\e[0m\]\n\$ '
+    else
+      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
     fi
-      ;;
+    if [ -n "${BASH_VERSION}" ]; then
+      case ":${SHELLOPTS}:" in
+        *:posix:*)
+          HISTFILE=${HOME}/.sh_history
+          ;;
+        *)
+          HISTFILE=${HOME}/.bash_history
+          _have__git_ps1=no
+          type __git_ps1 2> /dev/null > /dev/null
+          if [ $? = 0 ]; then
+            _have__git_ps1=yes
+          else
+            if [ -f /usr/local/etc/profile.d/git-prompt.sh ]; then
+              . /usr/local/etc/profile.d/git-prompt.sh
+              type __git_ps1 2> /dev/null > /dev/null
+              if [ $? = 0 ]; then
+                _have__git_ps1=yes
+              fi
+            fi
+          fi
+          if [ "${_have__git_ps1}" = "yes" ]; then
+	        case "${OSTYPE}" in
+              msys)
+                PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]'
+                PS1="${PS1}"'`__git_ps1`'
+                PS1="${PS1}"'\[\033[0m\]\n$ '
+                ;;
+              *)
+                GIT_PS1_SHOWDIRTYSTATE=true
+                if [ -n "${OSTYPE}" ]; then
+                  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$OSTYPE \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+                else
+                  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+                fi
+              ;;
+            esac
+          fi
+      esac
+      unset _have__git_ps1
+    fi
+    export PS1
+    ;;
   *)
     return
     ;;
@@ -44,7 +84,7 @@ esac
 
 # History settings
 HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
-HISTFILE=${HOME}/.bash_history
+# HISTFILE=${HOME}/.bash_history
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
