@@ -56,7 +56,7 @@ case "$-" in
             fi
           fi
           if [ "${_have__git_ps1}" = "yes" ]; then
-	        case "${OSTYPE}" in
+            case "${OSTYPE}" in
               msys)
                 PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]'
                 PS1="${PS1}"'`__git_ps1`'
