@@ -5,4 +5,5 @@ if [ -f "${HOME}/.sh_aliases" ]; then
   source "${HOME}/.sh_aliases"
 fi
 
-# source <(jj util completion bash)
+\type jj 2> /dev/null > /dev/null
+[ $? = 0 ] && source <(jj util completion bash)
