@@ -1,4 +1,4 @@
-プロンプトにgitのブランチ名を常に表示する方法
+# プロンプトにgitのブランチ名を常に表示する方法
 https://zenn.dev/melos/articles/043fc03789603c
 
 $ wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
@@ -16,3 +16,21 @@ fi
 
 GIT_PS1_SHOWDIRTYSTATE=true
 export PS1='\[\033[32m\]\u@\h\[\033[00m\]:\[\033[34m\]\w\[\033[31m\]$(__git_ps1)\[\033[00m\]\n\$ '
+
+
+# テキストファイルのリポジトリ内での改行コードを判定する
+$ git cat-file -t $(git hash-object readme.txt)
+blob
+$ git cat-file -p $(git hash-object readme.txt) | file -
+/dev/stdin: ASCII text
+
+# Git管理ファイルのタイムスタンプをコミット日時にする
+# https://qiita.com/yoshi389111/items/ec9f2062024625814203
+# ファイル名に空白やASCII以外の文字があると、うまくいかない
+
+#!/bin/sh
+
+for file in $(git ls-files); do
+    timestamp=$(git log -1 --date=format-local:"%Y%m%d%H%M%S" --pretty=format:"%ad" "${file}")
+    touch -t "${timestamp}" "${file}"
+done
