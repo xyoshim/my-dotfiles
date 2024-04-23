@@ -26,6 +26,11 @@
 # If not running interactively, don't do anything
 #[[ "$-" != *i* ]] && return
 
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
 case "$-" in
   *i*)
     if [ -n "${MSYSTEM}" ]; then
@@ -83,11 +88,16 @@ case "$-" in
 esac
 
 # History settings
-HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+[[ "$HISTCONTROL" != *ignoreboth* ]] && export HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
 # HISTFILE=${HOME}/.bash_history
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
+# export HISTCONTROL=erasedups:ignoredups:ignorespace
+# #export HISTCONTROL=ignoredups:ignorespace
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
 
 # alias ls='ls --color=auto'
 
@@ -183,3 +193,13 @@ fi
 if [ -f "${HOME}/.bash_functions" ]; then
   source "${HOME}/.bash_functions"
 fi
+
+# User specific aliases and functions
+if [ -d ~/.bashrc.d ]; then
+  for rc in ~/.bashrc.d/*; do
+    if [ -f "$rc" ]; then
+      . "$rc"
+    fi
+  done
+fi
+unset rc
