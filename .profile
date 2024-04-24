@@ -1,9 +1,9 @@
-# To the extent possible under law, the author(s) have dedicated all 
-# copyright and related and neighboring rights to this software to the 
-# public domain worldwide. This software is distributed without any warranty. 
-# You should have received a copy of the CC0 Public Domain Dedication along 
-# with this software. 
-# If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
+# To the extent possible under law, the author(s) have dedicated all
+# copyright and related and neighboring rights to this software to the
+# public domain worldwide. This software is distributed without any warranty.
+# You should have received a copy of the CC0 Public Domain Dedication along
+# with this software.
+# If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 # base-files version 4.3-3
 
@@ -23,31 +23,21 @@
 
 # User dependent .profile file
 
-# # Set user-defined locale
-# export LANG=$(locale -uU)
+# Set user-defined locale
+[ locale -uU > /dev/null 2> /dev/null ] && export LANG="$(locale -uU)"
 
 # This file is not read by bash(1) if ~/.bash_profile or ~/.bash_login
 # exists.
 
 # Set PATH so it includes user's private bin if it exists
-for TMP_PATH in ${HOME}/bin ${HOME}/.local/bin
+for TMP_PATH in "${HOME}/bin ${HOME}/.local/bin"
 do
-  if [ -d "${TMP_PATH}" ]; then
-    echo ":${PATH}:" | /usr/bin/grep ":${TMP_PATH}:" 2>&1 > /dev/null
-    if [ $? != 0 ]; then
-      PATH="${TMP_PATH}:${PATH}"; export PATH
-    fi
+  if [ -d "${TMP_PATH}" ] ; then
+    PATH="${TMP_PATH}:${PATH}"
   fi
 done
+export PATH
 unset TMP_PATH
-# PATH="${HOME}/bin:${HOME}/.local/bin:${PATH}"; export PATH
-
-# History settings
-HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
-export HISTCONTROL
-HISTFILESIZE=10000
-HISTIGNORE='&:ls:ll:la:fg:bg:ps:top:df:du'
-HISTSIZE=10000
 
 # Add path
 if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
@@ -58,7 +48,7 @@ if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   MANPATH="${MANPATH:=/usr/share/man:/usr/man}"
   INFOPATH="${INFOPATH:=/usr/share/info:/usr/info}"
   for TMP_PREFIX_PATH in ${PREFIXS}
-  do 
+  do
     MANPATH="${TMP_PREFIX_PATH}/share/man:${TMP_PREFIX_PATH}/man:${MANPATH}"
     INFOPATH="${TMP_PREFIX_PATH}/share/info:${TMP_PREFIX_PATH}/info:${INFOPATH}"
   done
@@ -75,15 +65,17 @@ fi
 
 # default editor and pager
 if [ ! "x${TERM}" = "x" ]; then
-  [ -x /usr/bin/vim ] && EDITOR="/usr/bin/vim" && export EDITOR
-  [ -x /usr/bin/less ] && PAGER="/usr/bin/less -R" && export PAGER
+  EDITOR=${EDITOR:=/usr/bin/vim} && export EDITOR
+  PAGER=${PAGER:=/usr/bin/less}  && export PAGER
 fi
 
 # if CYGWIN or MSYS, use Windows symbolic link
 if [ "${OSTYPE}" = "cygwin" ]; then
-  CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native" ; export CYGWIN
+  CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native" && export CYGWIN
+  EXEEXT=".exe" && export EXEEXT
 elif [ "${OSTYPE}" = "msys" ]; then
-  MSYS="${MSYS}${MSYS+ }winsymlinks:native" ; export MSYS
+  MSYS="${MSYS}${MSYS+ }winsymlinks:native" && export MSYS
+  EXEEXT=".exe" && export EXEEXT
 fi
 
 # Shell dependent settings from /usr/local/etc/profile.d
@@ -108,18 +100,17 @@ local_profile_d ()
 
 local_profile_d sh
 if [ ! "x${BASH_VERSION}" = "x"  ]; then
-  [[ "${SHELLOPTS}" = *posix* ]] && HISTFILE=${HOME}/.sh_history
   : # HISTFILE=${HOME}/.bash_history
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
-  HISTFILE=${HOME}/.ksh_history
+  HISTFILE=${HOME}/.ksh_history && export HISTFILE
 elif [ ! "x${ZSH_VERSION}" = "x" ]; then
   # zsh is in shell compatibility mode here, so we probably shouldn't do this
   local_profile_d zsh
-  HISTFILE=${HOME}/.zsh_history
+  HISTFILE=${HOME}/.zsh_history && export HISTFILE
 elif [ ! "x${POSH_VERSION}" = "x" ]; then
   local_profile_d posh
-  HISTFILE=${HOME}/.posh_history
+  HISTFILE=${HOME}/.posh_history && export HISTFILE
 else
   : # [ "${PS1-null}" = "null" ] || PS1="$ "
 fi
