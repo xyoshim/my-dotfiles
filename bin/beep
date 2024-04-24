@@ -1,0 +1,12 @@
+#! /bin/sh
+
+if test -w /dev/pts/0 ; then
+    printf '\a' | tee /dev/pts/0
+elif test -w /dev/tty1 ; then
+    printf '\a' | tee /dev/tty1
+else
+    printf '\a'
+fi
+
+exit $?
+#exec printf '\a'

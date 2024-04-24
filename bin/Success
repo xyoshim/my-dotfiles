@@ -1,0 +1,38 @@
+#!/bin/bash --norc
+
+beep="no"
+sleeptime=0
+soundfile=/usr/local/share/audio/ogg/success.ogg
+while [ $# -gt 0 ]; do
+    case $1 in
+        -b|--beep)
+            beep="yes"
+            ;;
+        -s|--sleep*)
+            if [ "$1" != "${1##--sleep=}" ]; then
+                sleeptime=${1##--sleep=}
+            else
+                sleeptime=$2
+                shift
+            fi
+            ;;
+        *)
+            ;;
+    esac
+
+    shift
+done
+
+if [ x"$beep" == xyes ]; then
+    /usr/local/bin/beep
+fi
+if [ $sleeptime > 0 ]; then
+    sleep $sleeptime
+fi
+
+echo "Success!"
+if [ -f "$soundfile" ]; then
+    #ogg123 -q /usr/local/share/audio/ogg/success.ogg > /dev/null 2>&1
+    ogg123 -q "$soundfile" > /dev/null 2>&1
+fi
+exec true
