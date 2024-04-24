@@ -1,0 +1,17 @@
+# Global Git ignore files.
+.vs/
+.vscode/
+.svn/
+.jj/
+
+[Dd][Ee][Ss][Kk][Tt][Oo][Pp].[Ii][Nn][Ii]
+[Ff][Oo][Ll][Dd][Ee][Rr].[Ii][Cc][Oo]
+[Tt][Hh][Uu][Mm][Bb][Ss].[Dd][Bb]
+.DS_Store
+
+~*
+.~*
+*.swp
+*.bak
+*.orig
+*.rej
