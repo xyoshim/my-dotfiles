@@ -1,0 +1,31 @@
+
+[user]
+name = "MVA"
+email = "mva000@gmail.com"
+
+[ui]
+# editor = ["C:\\Program Files\\Git\\usr\\bin\\vim.exe", "--literal"]
+editor = ["/usr/bin/vim"]
+pager=["/usr/bin/less", "-FRX"]
+paginate = "auto"
+
+[alias]
+alog=["log", "-r", "..@"]
+clog=["log", "-T", "builtin_log_comfortable"]
+calog=["log", "-r", "..@", "-T", "builtin_log_comfortable"]
+dlog=["log", "-T", "builtin_log_detailed"]
+dalog=["log", "-r", "..@", "-T", "builtin_log_detailed"]
+olog=["log", "-T", "builtin_log_oneline"]
+oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
+
+# source <(jj util completion bash)
+#
+# jj git init
+# jj git remote add origin <URL>
+# jj branch create -r @- main
+#
+# jj git init --colocate
+#
+# jj branch set -r @- main
+#
+# jj squash --from aaa:: --into bbb
