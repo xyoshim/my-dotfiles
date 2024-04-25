@@ -26,6 +26,14 @@
 # If not running interactively, don't do anything
 #[[ "$-" != *i* ]] && return
 
+# Not bash
+[ -z "${BASH_VERSION}" ] && return
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
 case "$-" in
   *i*)
     if [ -n "${MSYSTEM}" ]; then
@@ -35,47 +43,46 @@ case "$-" in
     else
       PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
     fi
-    if [ -n "${BASH_VERSION}" ]; then
-      case ":${SHELLOPTS}:" in
-        *:posix:*)
-          HISTFILE=${HOME}/.sh_history
-          ;;
-        *)
-          HISTFILE=${HOME}/.bash_history
-          _have__git_ps1=no
-          type __git_ps1 2> /dev/null > /dev/null
-          if [ $? = 0 ]; then
-            _have__git_ps1=yes
-          else
-            if [ -f /usr/local/etc/profile.d/git-prompt.sh ]; then
-              . /usr/local/etc/profile.d/git-prompt.sh
-              type __git_ps1 2> /dev/null > /dev/null
-              if [ $? = 0 ]; then
-                _have__git_ps1=yes
-              fi
+    case ":${SHELLOPTS}:" in
+      *:posix:*)
+        HISTFILE=${HOME}/.sh_history
+        ;;
+      *)
+        HISTFILE=${HOME}/.bash_history
+        _have__git_ps1=no
+        type __git_ps1 2> /dev/null > /dev/null
+        if [ $? = 0 ]; then
+          _have__git_ps1=yes
+        else
+          if [ -f /usr/local/etc/profile.d/git-prompt.sh ]; then
+            . /usr/local/etc/profile.d/git-prompt.sh
+            type __git_ps1 2> /dev/null > /dev/null
+            if [ $? = 0 ]; then
+              _have__git_ps1=yes
             fi
           fi
-          if [ "${_have__git_ps1}" = "yes" ]; then
-            case "${OSTYPE}" in
-              msys)
-                PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]'
-                PS1="${PS1}"'`__git_ps1`'
-                PS1="${PS1}"'\[\033[0m\]\n$ '
-                ;;
-              *)
-                GIT_PS1_SHOWDIRTYSTATE=true
-                if [ -n "${OSTYPE}" ]; then
-                  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$OSTYPE \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
-                else
-                  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
-                fi
+        fi
+        if [ "${_have__git_ps1}" = "yes" ]; then
+          case "${OSTYPE}" in
+            msys)
+              PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]'
+              PS1="${PS1}"'`__git_ps1`'
+              PS1="${PS1}"'\[\033[0m\]\n$ '
               ;;
-            esac
-          fi
-      esac
+            *)
+              GIT_PS1_SHOWDIRTYSTATE=true
+              if [ -n "${OSTYPE}" ]; then
+                PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$OSTYPE \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+              else
+                PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+              fi
+            ;;
+          esac
+        fi
+        ;;
+    esac
       unset _have__git_ps1
-    fi
-    export PS1
+    # export PS1
     ;;
   *)
     return
@@ -83,7 +90,7 @@ case "$-" in
 esac
 
 # History settings
-HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+[[ "$HISTCONTROL" != *ignoreboth* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
 # HISTFILE=${HOME}/.bash_history
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
