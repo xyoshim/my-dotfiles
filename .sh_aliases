@@ -13,8 +13,8 @@
 
 alias ls='\ls --color=auto --show-control-chars'
 if [ -n "${EXEEXT}" ]; then
-  alias ls.exe="\ls${EXEEXT} --color=auto --show-control-chars"
-  alias grep.exe="\grep${EXEEXT} --color=auto"
+  alias ls${EXEEXT}="\ls${EXEEXT} --color=auto --show-control-chars"
+  alias grep${EXEEXT}="\grep${EXEEXT} --color=auto"
 fi
 # alias less='less -r'                          # raw control characters
 alias whence='\type -a'                        # where, of a sort
