@@ -33,7 +33,8 @@
 for TMP_PATH in "${HOME}/bin" "${HOME}/.local/bin"
 do
   if [ -d "${TMP_PATH}" ]; then
-    [[ ":${PATH}:" != *:${TMP_PATH}:* ]] && PATH="${TMP_PATH}:${PATH}"
+    echo ":${PATH}:" | /usr/bin/fgrep ":${TMP_PATH}:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && PATH="${TMP_PATH}:${PATH}"
   fi
 done
 export PATH
@@ -49,10 +50,14 @@ if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   INFOPATH="${INFOPATH:=/usr/share/info:/usr/info}"
   for TMP_PREFIX_PATH in ${PREFIXS}
   do
-    [[ ":${MANPATH}:" != *:${TMP_PREFIX_PATH}/man:* ]] && MANPATH="${TMP_PREFIX_PATH}/man:${MANPATH}"
-    [[ ":${MANPATH}:" != *:${TMP_PREFIX_PATH}/share/man:* ]] && MANPATH="${TMP_PREFIX_PATH}/share/man:${MANPATH}"
-    [[ ":${INFOPATH}:" != *:${TMP_PREFIX_PATH}/info:* ]] && INFOPATH="${TMP_PREFIX_PATH}/info:${INFOPATH}"
-    [[ ":${INFOPATH}:" != *:${TMP_PREFIX_PATH}/share/info:* ]] && INFOPATH="${TMP_PREFIX_PATH}/share/info:${INFOPATH}"
+    echo ":${MANPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/man:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && MANPATH="${TMP_PREFIX_PATH}/man:${MANPATH}"
+    echo ":${MANPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/share/man:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && MANPATH="${TMP_PREFIX_PATH}/share/man:${MANPATH}"
+    echo ":${INFOPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/info:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && INFOPATH="${TMP_PREFIX_PATH}/info:${INFOPATH}"
+    echo ":${INFOPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/share/info:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && INFOPATH="${TMP_PREFIX_PATH}/share/info:${INFOPATH}"
   done
   export MANPATH INFOPATH
   unset TMP_PREFIX_PATH PREFIXS
@@ -115,7 +120,7 @@ elif [ ! "x${POSH_VERSION}" = "x" ]; then
   local_profile_d posh
   HISTFILE=${HOME}/.posh_history && export HISTFILE
 else
-  : # [ "${PS1-null}" = "null" ] || PS1="$ "
+  PS1="$ "
 fi
 
 # dotnet
@@ -127,13 +132,15 @@ if [ -z "$DOTNET_ROOT" -a -x "$HOME/.dotnet/dotnet" ]; then
   DOTNET_ROOT="$HOME/.dotnet" && export DOTNET_ROOT
 fi
 if [ -n  "$DOTNET_ROOT" ]; then
-  [[ ":${PATH}:" != *:${DOTNET_ROOT}:* ]] && PATH="${PATH}:${DOTNET_ROOT}"
+    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_ROOT}:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && PATH="${DOTNET_ROOT}:${PATH}"
 fi
 ## DOTNET_TOOLS_PATH
 if [ -z "$DOTNET_TOOLS_PATH" -a -n "$DOTNET_ROOT" ]; then
   DOTNET_TOOLS_PATH="$HOME/.dotnet/tools" && export DOTNET_TOOLS_PATH
 fi
 if [ -n  "$DOTNET_TOOLS_PATH" ]; then
-  [[ ":${PATH}:" != *:${DOTNET_TOOLS_PATH}:* ]] && PATH="${PATH}:${DOTNET_TOOLS_PATH}"
+    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_TOOLS_PATH}:" > /dev/null 2> /dev/null
+    [ $? != 0 ] && PATH="${DOTNET_TOOLS_PATH}:${PATH}"
 fi
 export PATH
