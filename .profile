@@ -30,10 +30,10 @@
 # exists.
 
 # Set PATH so it includes user's private bin if it exists
-for TMP_PATH in "${HOME}/bin ${HOME}/.local/bin"
+for TMP_PATH in "${HOME}/bin" "${HOME}/.local/bin"
 do
-  if [ -d "${TMP_PATH}" ] ; then
-    PATH="${TMP_PATH}:${PATH}"
+  if [ -d "${TMP_PATH}" ]; then
+    [[ ":${PATH}:" != *:${TMP_PATH}:* ]] && PATH="${TMP_PATH}:${PATH}"
   fi
 done
 export PATH
@@ -49,8 +49,10 @@ if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   INFOPATH="${INFOPATH:=/usr/share/info:/usr/info}"
   for TMP_PREFIX_PATH in ${PREFIXS}
   do
-    MANPATH="${TMP_PREFIX_PATH}/share/man:${TMP_PREFIX_PATH}/man:${MANPATH}"
-    INFOPATH="${TMP_PREFIX_PATH}/share/info:${TMP_PREFIX_PATH}/info:${INFOPATH}"
+    [[ ":${MANPATH}:" != *:${TMP_PREFIX_PATH}/man:* ]] && MANPATH="${TMP_PREFIX_PATH}/man:${MANPATH}"
+    [[ ":${MANPATH}:" != *:${TMP_PREFIX_PATH}/share/man:* ]] && MANPATH="${TMP_PREFIX_PATH}/share/man:${MANPATH}"
+    [[ ":${INFOPATH}:" != *:${TMP_PREFIX_PATH}/info:* ]] && INFOPATH="${TMP_PREFIX_PATH}/info:${INFOPATH}"
+    [[ ":${INFOPATH}:" != *:${TMP_PREFIX_PATH}/share/info:* ]] && INFOPATH="${TMP_PREFIX_PATH}/share/info:${INFOPATH}"
   done
   export MANPATH INFOPATH
   unset TMP_PREFIX_PATH PREFIXS
@@ -65,8 +67,8 @@ fi
 
 # default editor and pager
 if [ ! "x${TERM}" = "x" ]; then
-  EDITOR=${EDITOR:=/usr/bin/vim} && export EDITOR
-  PAGER=${PAGER:=/usr/bin/less}  && export PAGER
+  [ -x "/usr/bin/vim" ] && EDITOR=${EDITOR:=/usr/bin/vim} && export EDITOR
+  [ -x "/usr/bin/less" ] && PAGER=${EDITOR:=/usr/bin/less} && export PAGER
 fi
 
 # if CYGWIN or MSYS, use Windows symbolic link
@@ -100,7 +102,8 @@ local_profile_d ()
 
 local_profile_d sh
 if [ ! "x${BASH_VERSION}" = "x"  ]; then
-  : # HISTFILE=${HOME}/.bash_history
+  local_profile_d bash
+  # : # HISTFILE=${HOME}/.bash_history
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
   HISTFILE=${HOME}/.ksh_history && export HISTFILE
