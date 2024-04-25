@@ -114,3 +114,23 @@ elif [ ! "x${POSH_VERSION}" = "x" ]; then
 else
   : # [ "${PS1-null}" = "null" ] || PS1="$ "
 fi
+
+# dotnet
+## DOTNET_ROOT
+if [ -z "$DOTNET_ROOT" -o ! -x "${DOTNET_ROOT}/dotnet" ]; then
+  unset DOTNET_ROOT
+fi
+if [ -z "$DOTNET_ROOT" -a -x "$HOME/.dotnet/dotnet" ]; then
+  DOTNET_ROOT="$HOME/.dotnet" && export DOTNET_ROOT
+fi
+if [ -n  "$DOTNET_ROOT" ]; then
+  [[ ":${PATH}:" != *:${DOTNET_ROOT}:* ]] && PATH="${PATH}:${DOTNET_ROOT}"
+fi
+## DOTNET_TOOLS_PATH
+if [ -z "$DOTNET_TOOLS_PATH" -a -n "$DOTNET_ROOT" ]; then
+  DOTNET_TOOLS_PATH="$HOME/.dotnet/tools" && export DOTNET_TOOLS_PATH
+fi
+if [ -n  "$DOTNET_TOOLS_PATH" ]; then
+  [[ ":${PATH}:" != *:${DOTNET_TOOLS_PATH}:* ]] && PATH="${PATH}:${DOTNET_TOOLS_PATH}"
+fi
+export PATH
