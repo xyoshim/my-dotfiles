@@ -1,4 +1,4 @@
-# 
+#
 TMP_PATH=$(echo :${PATH}: | sed \
   -e 's|:/cygdrive/c/[Ww][Ii][Nn][Ds][Oo][Ww][Ss]/System32/WindowsPowerShell/v1.0|:|g' \
   -e 's|:/cygdrive/c/[Ww][Ii][Nn][Ds][Oo][Ww][Ss]/System32/OpenSSH:|:|g' \
