@@ -10,17 +10,31 @@ newline_style = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# Markdown
 [*.md]
 trim_trailing_whitespace = false
 
+# Log file
 [*.log]
 insert_final_newline = false
 trim_trailing_whitespace = false
 
+# Shell script
+[*.{sh,bash}]
+indent_style = space
+indent_size = 2
+
+# Exception of [*.{sh,bash}]
+[{git-completion.bash,git-prompt.sh}]
+indent_style = tab
+indent_size = 4
+
+# Configuration files of shells
 [.*{shrc,profile,aliases,functions}]
 indent_style = space
 indent_size = 2
 
+# Configuration files of mksh
 [.mksh*]
 indent_style = tab
 indent_size = 4
