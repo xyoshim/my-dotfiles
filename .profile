@@ -73,7 +73,7 @@ fi
 # default editor and pager
 if [ ! "x${TERM}" = "x" ]; then
   [ -x "/usr/bin/vim" ] && EDITOR=${EDITOR:=/usr/bin/vim} && export EDITOR
-  [ -x "/usr/bin/less" ] && PAGER=${EDITOR:=/usr/bin/less} && export PAGER
+  [ -x "/usr/bin/less" ] && PAGER=${PAGER:=/usr/bin/less} && export PAGER
 fi
 
 # if CYGWIN or MSYS, use Windows symbolic link
