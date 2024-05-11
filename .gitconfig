@@ -8,8 +8,9 @@
 	email = mva000@gmail.com
 [alias]
 	graphlog = log --pretty='format:%C(auto)%h %as%d %s' --date=local --graph
-	changelog = log --pretty='format:%C(auto)%as  %an <%ae>%n    %s%n' --date=local
+	changelog = log --pretty='format:%C(auto)%as  %an <%ae>%n  * %s%n' --date=local
 	dlg = log --date=local --graph
-
+	sha1-short7 = rev-parse --short=7
+	sha1-short7-head = rev-parse --short=7 HEAD
 [color]
 	ui = auto
