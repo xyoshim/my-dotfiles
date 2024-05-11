@@ -4,10 +4,22 @@ name = "MVA"
 email = "mva000@gmail.com"
 
 [ui]
+ui.color = "auto" # the default
+# ui.color = never # no color
+
 # editor = ["C:\\Program Files\\Git\\usr\\bin\\vim.exe", "--literal"]
 editor = ["/usr/bin/vim"]
 pager=["/usr/bin/less", "-FRX"]
 paginate = "auto"
+
+ui.diff-editor = ":builtin" # default, internal TUI tool
+# ui.diff-editor = "meld"
+# ui.diff-editor = "vimdiff"
+
+# ui.merge-editor = "meld" # default
+# ui.merge-editor = "vscode"
+# ui.merge-editor = "vimdiff"
+# ui.merge-editor = "kdiff3"
 
 [alias]
 alog=["log", "-r", "..@"]
@@ -18,6 +30,11 @@ dalog=["log", "-r", "..@", "-T", "builtin_log_detailed"]
 olog=["log", "-T", "builtin_log_oneline"]
 oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
 
+# Change the default push/fetch remote for `jj git push` and `jj git fetch`
+# git.fetch = "upstream"
+# git.push = "myfork"
+
+#
 # source <(jj util completion bash)
 #
 # jj git init
