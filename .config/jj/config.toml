@@ -35,13 +35,53 @@ oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
 # git.push = "myfork"
 
 #
-# source <(jj util completion bash)
+# install <https://martinvonz.github.io/jj/latest/install-and-setup/>
+#
+# Will put the jj binary for the latest release in ~/.cargo/bin by default
+# $ cargo binstall --strategies crate-meta-data jj-cli
+# Without the --strategies option, you may get equivalent binaries that should be compiled from the same source code.
+#
+# From Source¶
+# First make sure that you have the libssl-dev, openssl, pkg-config, and build-essential packages installed by running something like this:
+# sudo apt-get install libssl-dev openssl pkg-config build-essential
+# Now run either:
+# # To install the *prerelease* version from the main branch
+# cargo install --git https://github.com/martinvonz/jj.git --locked --bin jj jj-cli
+# or:
+# # To install the latest release
+# cargo install --locked --bin jj jj-cli
+#
+# <https://zenn.dev/zetamatta/books/c1e309aea68960/viewer/07_git>
+# jj git clone https://github.com/hymkor/go-htnblog.git
 #
 # jj git init
-# jj git remote add origin <URL>
+# jj git remote add origin (URL)
 # jj branch create -r @- main
 #
 # jj git init --colocate
+#
+# <https://zenn.dev/zetamatta/books/c1e309aea68960/viewer/08_misc>
+#
+# だいたい git と同じもの
+# git jj
+# git restore jj restore
+# git diff jj diff
+# git commit --amend -a jj squash
+# git switch <branch> jj new <branch>
+#
+# リビジョン指定(revset)
+# 指定 意味
+# @ 現在の作業コピー
+# foo- foo の親
+# foo+ foo の子
+# foo:: foo の子孫
+# ::foo foo の先祖
+# tags() 全てのタグ
+# latest(foo) foo のうちの最も新しいもの
+# root() ルートコミット
+
+# completion
+# source <(jj util completion bash)
 #
 # jj branch set -r @- main
 #
