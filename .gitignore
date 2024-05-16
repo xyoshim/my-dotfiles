@@ -5,6 +5,7 @@ thumbs.db
 
 .vs/
 .vscode/
+.svn/
 .hg/
 .jj/
 .jjconflict*/
@@ -16,6 +17,7 @@ thumbs.db
 *.bak
 *.orig
 *.rej
+*.work
 
 .*history
 .viminfo
