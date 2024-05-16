@@ -5,8 +5,9 @@ thumbs.db
 
 .vs/
 .vscode/
-.svn/
+.hg/
 .jj/
+.jjconflict*/
 .DS_Store
 
 ~*
