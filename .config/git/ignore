@@ -2,7 +2,9 @@
 .vs/
 .vscode/
 .svn/
+.hg/
 .jj/
+.jjconflict*/
 
 [Dd][Ee][Ss][Kk][Tt][Oo][Pp].[Ii][Nn][Ii]
 [Ff][Oo][Ll][Dd][Ee][Rr].[Ii][Cc][Oo]
