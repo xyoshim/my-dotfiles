@@ -51,13 +51,17 @@ oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
 # cargo install --locked --bin jj jj-cli
 #
 # <https://zenn.dev/zetamatta/books/c1e309aea68960/viewer/07_git>
-# jj git clone https://github.com/hymkor/go-htnblog.git
+# # 既存のgitリポジトリをクローンする
+#   jj git clone https://github.com/hymkor/go-htnblog.git
 #
-# jj git init
-# jj git remote add origin (URL)
-# jj branch create -r @- main
-#
-# jj git init --colocate
+# # 新規にjjのリポジトリを作成する
+#   jj git init
+# # 既存のgitリポジトリと関連付ける
+#   jj git remote add origin (URL)
+# # 既存gitリポジトリのmainブランチをトラッキングするローカルブランチを作成する
+#   jj branch create -r @- main
+# # git clone済のローカルブランチでjjを使えるようにする
+#   jj git init --colocate
 #
 # <https://zenn.dev/zetamatta/books/c1e309aea68960/viewer/08_misc>
 #
@@ -79,9 +83,20 @@ oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
 # latest(foo) foo のうちの最も新しいもの
 # root() ルートコミット
 
-# completion
+# # completion for bash
 # source <(jj util completion bash)
 #
+# # 新規にブランチmainをチェックアウトし追跡ブランチmaster@originを作成する
+# jj branch create -r @- main
+#
+# # jj newやjj commit後にブランチ(main)を先頭(@の直前)へ移動する
 # jj branch set -r @- main
 #
+# # jj branch set後にgitのbranch(main)先頭をHEADにする
+# git switch main
+#
+# # コミットaaa以降をコミットbbbにまとめる
 # jj squash --from aaa:: --into bbb
+#
+# # 作業ブランチをmainからBBBに移動する(作業ブランチはコミット済みとする)
+# jj new BBB
