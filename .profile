@@ -30,13 +30,15 @@
 # exists.
 
 # Set PATH so it includes user's private bin if it exists
-for TMP_PATH in "${HOME}/bin" "${HOME}/.local/bin"
+for TMP_PATH in /usr/local/bin "${HOME}/bin" "${HOME}/.local/bin"
 do
   if [ -d "${TMP_PATH}" ]; then
     echo ":${PATH}:" | /usr/bin/fgrep ":${TMP_PATH}:" > /dev/null 2> /dev/null
-    [ $? != 0 ] && PATH="${TMP_PATH}:${PATH}"
+    [ $? = 0 ] && PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${TMP_PATH}:|:|g")"
+    PATH="${TMP_PATH}:${PATH}"
   fi
 done
+PATH="$(echo ${PATH} | /usr/bin/sed -e 's|::*|:|g' -e 's|^:||g' -e 's|:$||g')"
 export PATH
 unset TMP_PATH
 
