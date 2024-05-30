@@ -71,6 +71,11 @@ case "$-" in
               ;;
             *)
               GIT_PS1_SHOWDIRTYSTATE=true
+              GIT_PS1_SHOWSTASHSTATE=true
+              GIT_PS1_SHOWUNTRACKEDFILES=true
+              GIT_PS1_SHOWUPSTREAM=auto
+              GIT_PS1_SHOWCONFLICTSTATE=yes
+              # GIT_PS1_SHOWCOLORHINTS=true
               if [ -n "${OSTYPE}" ]; then
                 PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$OSTYPE \[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
               else
