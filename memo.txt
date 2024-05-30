@@ -1,8 +1,15 @@
 # プロンプトにgitのブランチ名を常に表示する方法
 https://zenn.dev/melos/articles/043fc03789603c
 
+# https://github.com/git/git/ からファイルを抽出
 $ wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 $ wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+# 作業コピーがクリーン以外の場合、プロンプトにアスタリスクを表示する
+# 環境変数GIT_PS1_SHOWUNTRACKEDFILESに空以外の値を設定、または以下のコマンドを実行する
+$ git config --global bash.showDirtyState 1
+# プロンプトに上流と比較した作業コピーの状態を表示する($=<>)
+# 環境変数GIT_PS1_SHOWUPSTREAMにautoを設定、または以下のコマンドを実行する
+$ git config --global bash.showUpstream auto
 
 #
 # git-completion.bash / git-prompt.sh
