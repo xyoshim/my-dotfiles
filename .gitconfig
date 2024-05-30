@@ -19,3 +19,6 @@
 	recentrepo = H:/src/git/pcre2
 [color]
 	ui = auto
+[bash]
+	showDirtyState = 1
+	showUpstream = auto
