@@ -44,7 +44,7 @@ unset TMP_PATH
 
 # Add path
 if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
-  PREFIXS="/usr/local ${MSYSTEM_PREFIX}"
+  PREFIXS="/usr/local "$HOME/.cargo/env" ${MSYSTEM_PREFIX}"
   if [ x"${MSYSTEM_PREFIX}" != x"${MINGW_PREFIX}" ]; then
     PREFIXS="${PREFIXS} ${MINGW_PREFIX}"
   fi
