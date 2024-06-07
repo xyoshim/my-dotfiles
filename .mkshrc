@@ -736,3 +736,4 @@ if [ -f "${HOME}/.sh_aliases" ]; then
 	source "${HOME}/.sh_aliases"
 fi
 alias whence='\\builtin whence'
+alias where='\\builtin whence -v'
