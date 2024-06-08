@@ -55,14 +55,17 @@ case "$-" in
         HISTFILE=${HOME}/.sh_history
         ;;
       *)
+        if [ -f "${HOME}/.config/git/git-completion.bash" ]; then
+          . "${HOME}/.config/git/git-completion.bash"
+        fi
         HISTFILE=${HOME}/.bash_history
         _have__git_ps1=no
         type __git_ps1 2> /dev/null > /dev/null
         if [ $? = 0 ]; then
           _have__git_ps1=yes
         else
-          if [ -f /usr/local/etc/profile.d/git-prompt.sh ]; then
-            . /usr/local/etc/profile.d/git-prompt.sh
+          if [ -f "${HOME}/.config/git/git-prompt.sh" ]; then
+            . "${HOME}/.config/git/git-prompt.sh"
             type __git_ps1 2> /dev/null > /dev/null
             if [ $? = 0 ]; then
               _have__git_ps1=yes
@@ -112,6 +115,11 @@ esac
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
+# export HISTCONTROL=erasedups:ignoredups:ignorespace
+# #export HISTCONTROL=ignoredups:ignorespace
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
 
 # alias ls='ls --color=auto'
 
@@ -207,3 +215,13 @@ fi
 if [ -f "${HOME}/.bash_functions" ]; then
   source "${HOME}/.bash_functions"
 fi
+
+# User specific aliases and functions
+if [ -d ~/.bashrc.d ]; then
+  for rc in ~/.bashrc.d/*; do
+    if [ -f "$rc" ]; then
+      . "$rc"
+    fi
+  done
+fi
+unset rc
