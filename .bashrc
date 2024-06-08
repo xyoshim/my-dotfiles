@@ -55,14 +55,17 @@ case "$-" in
         HISTFILE=${HOME}/.sh_history
         ;;
       *)
+        if [ -f "${HOME}/.config/git/git-completion.bash" ]; then
+          . "${HOME}/.config/git/git-completion.bash"
+        fi
         HISTFILE=${HOME}/.bash_history
         _have__git_ps1=no
         type __git_ps1 2> /dev/null > /dev/null
         if [ $? = 0 ]; then
           _have__git_ps1=yes
         else
-          if [ -f /usr/local/etc/profile.d/git-prompt.sh ]; then
-            . /usr/local/etc/profile.d/git-prompt.sh
+          if [ -f "${HOME}/.config/git/git-prompt.sh" ]; then
+            . "${HOME}/.config/git/git-prompt.sh"
             type __git_ps1 2> /dev/null > /dev/null
             if [ $? = 0 ]; then
               _have__git_ps1=yes
