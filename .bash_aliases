@@ -10,5 +10,7 @@ alias where='\type -a'          # where
 alias whence='\type'            # where, of a sort
 
 # jujutsu complition
-\type jj 2> /dev/null > /dev/null
-[ $? = 0 ] && source <(jj util completion bash)
+# $ jj util completion bash > "${HOME}/.config/jj/jj-completion.bash"
+if [ -f "${HOME}/.config/jj/jj-completion.bash" ]; then
+  source "${HOME}/.config/jj/jj-completion.bash"
+fi
