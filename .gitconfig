@@ -2,6 +2,7 @@
 	autocrlf = false
 	filemode = true
 	safecrlf = warn
+	ignorecase = false
 	editor = "/usr/bin/env" "vim"
 	pager = "/usr/bin/env" "less" "-FRX"
 [user]
