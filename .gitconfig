@@ -1,8 +1,9 @@
 [core]
 	filemode = true
 	safecrlf = warn
-	editor = /usr/bin/env vim
-	pager = /usr/bin/env less -FRX
+	ignorecase = false
+	editor = "/usr/bin/env" "vim"
+	pager = "/usr/bin/env" "less" "-FRX"
 [user]
 	name = MVA
 	email = mva000@gmail.com
