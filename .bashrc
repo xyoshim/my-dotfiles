@@ -75,34 +75,27 @@ case "$-" in
         if [ "${_have__git_ps1}" = "yes" ]; then
           case "${OSTYPE}" in
             msys|Msys)
-              GIT_PS1_SHOWDIRTYSTATE=true
-              GIT_PS1_SHOWUNTRACKEDFILES=true
-              GIT_PS1_SHOWSTASHSTATE=true
-              GIT_PS1_SHOWUPSTREAM=auto
-              GIT_PS1_SHOWCONFLICTSTATE=yes
-              GIT_PS1_SHOWCOLORHINTS=""
               PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
               PS1="${PS1}"'${MSYSTEM:=$OSTYPE} \[\033[33m\]\w\[\033[36m\]'
               PS1="${PS1}"'`__git_ps1`'
               PS1="${PS1}"'\[\033[0m\]\n$ '
               ;;
             *)
-              GIT_PS1_SHOWDIRTYSTATE=true
-              GIT_PS1_SHOWUNTRACKEDFILES=true
-              GIT_PS1_SHOWSTASHSTATE=true
-              GIT_PS1_SHOWUPSTREAM=auto
-              GIT_PS1_SHOWCONFLICTSTATE=yes
-              GIT_PS1_SHOWCOLORHINTS=""
               PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h '
               [ -n "${OSTYPE}" ] && PS1="${PS1}"'\[\033[35m\]$OSTYPE '
               PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
             ;;
           esac
+          GIT_PS1_SHOWDIRTYSTATE=true
+          GIT_PS1_SHOWUNTRACKEDFILES=true
+          GIT_PS1_SHOWSTASHSTATE=true
+          GIT_PS1_SHOWUPSTREAM=auto
+          GIT_PS1_SHOWCONFLICTSTATE=yes
+          GIT_PS1_SHOWCOLORHINTS=""
         fi
         ;;
     esac
-      unset _have__git_ps1
-    # export PS1
+    unset _have__git_ps1
     ;;
   *)
     return
