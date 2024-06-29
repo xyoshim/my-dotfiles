@@ -22,13 +22,18 @@ ui.diff-editor = ":builtin" # default, internal TUI tool
 # ui.merge-editor = "kdiff3"
 
 [alias]
+bsh=["branch", "set", "-r", "@-"]
 alog=["log", "-r", "..@"]
+rlog=["log", "-r"]
 clog=["log", "-T", "builtin_log_comfortable"]
 calog=["log", "-r", "..@", "-T", "builtin_log_comfortable"]
+crlog=["log", "-T", "builtin_log_comfortable", "-r"]
 dlog=["log", "-T", "builtin_log_detailed"]
 dalog=["log", "-r", "..@", "-T", "builtin_log_detailed"]
+drlog=["log", "-T", "builtin_log_detailed", "-r"]
 olog=["log", "-T", "builtin_log_oneline"]
 oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
+orlog=["log", "-T", "builtin_log_oneline", "-r"]
 
 # Change the default push/fetch remote for `jj git push` and `jj git fetch`
 # git.fetch = "upstream"
