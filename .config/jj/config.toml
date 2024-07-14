@@ -34,6 +34,10 @@ drlog=["log", "-T", "builtin_log_detailed", "-r"]
 olog=["log", "-T", "builtin_log_oneline"]
 oalog=["log", "-r", "..@", "-T", "builtin_log_oneline"]
 orlog=["log", "-T", "builtin_log_oneline", "-r"]
+rootlog=["log", "-r", "root()::"]
+crootlog=["log", "-T", "builtin_log_comfortable", "-r", "root()::"]
+drootlog=["log", "-T", "builtin_log_detailed", "-r", "root()::"]
+orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 
 # Change the default push/fetch remote for `jj git push` and `jj git fetch`
 # git.fetch = "upstream"
