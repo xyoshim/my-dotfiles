@@ -5,6 +5,7 @@
 	ignorecase = false
 	editor = "/usr/bin/env" "vim"
 	pager = "/usr/bin/env" "less" "-FRX"
+	quotepath = false
 [user]
 	name = MVA
 	email = mva000@gmail.com
