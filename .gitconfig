@@ -26,3 +26,5 @@
 	recentrepo = H:/src/git/pcre2
 [color]
 	ui = auto
+[rerere]
+	enabled = true
