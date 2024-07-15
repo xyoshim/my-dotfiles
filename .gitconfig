@@ -21,3 +21,5 @@
 	sha1-short7-head = rev-parse --short=7 HEAD
 [color]
 	ui = auto
+[rerere]
+	enabled = true
