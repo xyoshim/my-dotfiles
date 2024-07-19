@@ -28,6 +28,8 @@ alias vdir='ls --color=auto --format=long'
 alias l='ls -F'                               #
 alias ll='l -l'                               # long list
 alias la='l -A'                               # all but . and ..
-alias lo='l -Ao'                              # all but . and ..
+alias lla='ll -A'                             # all but . and ..
+alias lo='ll -o'                              #
+alias loa='lo -A'                             # all but . and ..
 alias beep='\printf "\a"'
 alias cls='\printf "\ec"'
