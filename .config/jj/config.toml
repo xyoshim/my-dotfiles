@@ -95,8 +95,8 @@ orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 # # completion for bash
 # source <(jj util completion bash)
 #
-# # 新規にブランチmainをチェックアウトし追跡ブランチmaster@originを作成する
-# jj branch create -r @- main
+# # 新規にブランチfutureを作成する
+# jj branch create -r @- future
 #
 # # jj newやjj commit後にブランチ(main)を先頭(@の直前)へ移動する
 # jj branch set -r @- main
