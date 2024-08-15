@@ -30,7 +30,7 @@
 # exists.
 
 # Set PATH so it includes user's private bin if it exists
-for TMP_PATH in /usr/local/bin "${HOME}/bin" "${HOME}/.local/bin"
+for TMP_PATH in /usr/local/bin "${HOME}/bin" "${HOME}/.local/bin" "${HOME}/.cargo/bin"
 do
   if [ -d "${TMP_PATH}" ]; then
     echo ":${PATH}:" | /usr/bin/fgrep ":${TMP_PATH}:" > /dev/null 2> /dev/null
@@ -44,7 +44,7 @@ unset TMP_PATH
 
 # Add path
 if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
-  PREFIXS="/usr/local "$HOME/.cargo/env" ${MSYSTEM_PREFIX}"
+  PREFIXS="/usr/local "$HOME/.cargo" ${MSYSTEM_PREFIX}"
   if [ x"${MSYSTEM_PREFIX}" != x"${MINGW_PREFIX}" ]; then
     PREFIXS="${PREFIXS} ${MINGW_PREFIX}"
   fi
