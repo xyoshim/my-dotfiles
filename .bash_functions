@@ -68,12 +68,17 @@
 #
 # alias cd=cd_func
 
-# tmux() {
-#   TMUX="command tmux ${*}"
-#   case $(tty) in
-#     /dev/pty[0-9]*|/dev/pts/[0-9]*)
-#       $TMUX;;
-#     *)
-#       SHELL=/usr/bin/bash script -q /dev/null -c "eval $TMUX";;
-#   esac
-# }
+tmux() {
+  TMUX="command tmux ${*}"
+  case $OSTYPE in
+    cygwin*)
+      $TMUX;;
+    *)
+      case $(tty) in
+        /dev/pty[0-9]*|/dev/pts/[0-9]*)
+          $TMUX;;
+        *)
+          SHELL=/usr/bin/bash script -q /dev/null -c "eval $TMUX";;
+      esac;;
+  esac
+}
