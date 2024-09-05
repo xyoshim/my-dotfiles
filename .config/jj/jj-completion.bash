@@ -438,6 +438,9 @@ _jj() {
             jj__file,show)
                 cmd="jj__file__show"
                 ;;
+            jj__file,untrack)
+                cmd="jj__file__untrack"
+                ;;
             jj__file__help,chmod)
                 cmd="jj__file__help__chmod"
                 ;;
@@ -449,6 +452,9 @@ _jj() {
                 ;;
             jj__file__help,show)
                 cmd="jj__file__help__show"
+                ;;
+            jj__file__help,untrack)
+                cmd="jj__file__help__untrack"
                 ;;
             jj__git,clone)
                 cmd="jj__git__clone"
@@ -812,6 +818,9 @@ _jj() {
                 ;;
             jj__help__file,show)
                 cmd="jj__help__file__show"
+                ;;
+            jj__help__file,untrack)
+                cmd="jj__help__file__untrack"
                 ;;
             jj__help__git,clone)
                 cmd="jj__help__git__clone"
@@ -4616,7 +4625,7 @@ _jj() {
             return 0
             ;;
         jj__file)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help chmod list show help"
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help chmod list show untrack help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -4712,7 +4721,7 @@ _jj() {
             return 0
             ;;
         jj__file__help)
-            opts="chmod list show help"
+            opts="chmod list show untrack help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -4768,6 +4777,20 @@ _jj() {
             return 0
             ;;
         jj__file__help__show)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        jj__file__help__untrack)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -4848,6 +4871,50 @@ _jj() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --repository)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                -R)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                --at-operation)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --at-op)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --color)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-toml)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        jj__file__untrack)
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help <PATHS>..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
                 --repository)
                     COMPREPLY=()
                     if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
@@ -6699,7 +6766,7 @@ _jj() {
             return 0
             ;;
         jj__help__file)
-            opts="chmod list show"
+            opts="chmod list show untrack"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -6741,6 +6808,20 @@ _jj() {
             return 0
             ;;
         jj__help__file__show)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        jj__help__file__untrack)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -8114,7 +8195,7 @@ _jj() {
             return 0
             ;;
         jj__next)
-            opts="-e -R -h --edit --conflict --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help [OFFSET]"
+            opts="-e -n -R -h --edit --no-edit --conflict --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help [OFFSET]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -8806,7 +8887,7 @@ _jj() {
             return 0
             ;;
         jj__prev)
-            opts="-e -R -h --edit --conflict --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help [OFFSET]"
+            opts="-e -n -R -h --edit --no-edit --conflict --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config-toml --help [OFFSET]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
