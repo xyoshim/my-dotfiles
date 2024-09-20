@@ -13,7 +13,7 @@
 
 ~*
 .~*
-*.swp
+*.sw[po]
 *.bak
 *.orig
 *.rej
