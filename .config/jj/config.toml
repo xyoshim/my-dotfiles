@@ -87,8 +87,12 @@ orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 # @ 現在の作業コピー
 # foo- foo の親
 # foo+ foo の子
-# foo:: foo の子孫
-# ::foo foo の先祖
+# foo:: foo の子孫(fooを含む)
+# ::foo foo の先祖(fooを含む)
+# foo::bar fooからbar(foo、barを含む)
+# foo.. foo の子孫(fooを含まない)
+# ..foo foo の先祖(fooを含まない)
+# foo..bar fooからbar(foo、barを含まない)
 # tags() 全てのタグ
 # latest(foo) foo のうちの最も新しいもの
 # root() ルートコミット
