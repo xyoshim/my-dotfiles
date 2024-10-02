@@ -39,3 +39,6 @@ alias lor='ll -oR'                            # recursive
 alias loar='lo -AR'                           # recursive all but . and ..
 alias beep='\printf "\a"'
 alias cls='\printf "\ec"'
+
+# Set XDG home
+export XDG_CONFIG_HOME="${HOME}/.config"
