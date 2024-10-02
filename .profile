@@ -65,6 +65,9 @@ if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   unset TMP_PREFIX_PATH PREFIXS
 fi
 
+# Set XDG home
+export XDG_CONFIG_HOME="${HOME}/.config"
+
 # if running bash
 if [ -n "${BASH_VERSION}" ]; then
   if [ -f "${HOME}/.bashrc" ]; then
