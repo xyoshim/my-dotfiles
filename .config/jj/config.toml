@@ -22,7 +22,7 @@ ui.diff-editor = ":builtin" # default, internal TUI tool
 # ui.merge-editor = "kdiff3"
 
 [alias]
-bsh=["branch", "set", "-r", "@-"]
+bsh=["bookmark", "set", "-r", "@-"]
 alog=["log", "-r", "..@"]
 rlog=["log", "-r"]
 clog=["log", "-T", "builtin_log_comfortable"]
@@ -69,7 +69,7 @@ orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 # # 既存のgitリポジトリと関連付ける
 #   jj git remote add origin (URL)
 # # 既存gitリポジトリのmainブランチをトラッキングするローカルブランチを作成する
-#   jj branch create -r @- main
+#   jj bookmark create -r @- main
 # # git clone済のローカルブランチでjjを使えるようにする
 #   jj git init --colocate
 #
@@ -80,7 +80,7 @@ orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 # git restore jj restore
 # git diff jj diff
 # git commit --amend -a jj squash
-# git switch <branch> jj new <branch>
+# git switch <bookmark> jj new <bookmark>
 #
 # リビジョン指定(revset)
 # 指定 意味
@@ -101,12 +101,12 @@ orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 # source <(jj util completion bash)
 #
 # # 新規にブランチfutureを作成する
-# jj branch create -r @- future
+# jj bookmark create -r @- future
 #
 # # jj newやjj commit後にブランチ(main)を先頭(@の直前)へ移動する
-# jj branch set -r @- main
+# jj bookmark set -r @- main
 #
-# # jj branch set後にgitのbranch(main)先頭をHEADにする
+# # jj bookmark set後にgitのブランチ(main)の先頭をHEADにする
 # git switch main
 #
 # # コミットaaa以降をコミットbbbにまとめる
