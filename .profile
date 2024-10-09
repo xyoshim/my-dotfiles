@@ -43,13 +43,14 @@ export PATH
 unset TMP_PATH
 
 # Add path
-if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
+if [ x"${SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
+  SET_HOME_PROFILE_ENVVARS="yes"
   PREFIXS="/usr/local "$HOME/.cargo" ${MSYSTEM_PREFIX}"
   if [ x"${MSYSTEM_PREFIX}" != x"${MINGW_PREFIX}" ]; then
     PREFIXS="${PREFIXS} ${MINGW_PREFIX}"
   fi
-  MANPATH="${MANPATH:=/usr/share/man:/usr/man}"
-  INFOPATH="${INFOPATH:=/usr/share/info:/usr/info}"
+  MANPATH="${MANPATH:-/usr/share/man:/usr/man}"
+  INFOPATH="${INFOPATH:-/usr/share/info:/usr/info}"
   for TMP_PREFIX_PATH in ${PREFIXS}
   do
     echo ":${MANPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/man:" > /dev/null 2> /dev/null
@@ -65,8 +66,11 @@ if [ x"{SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   unset TMP_PREFIX_PATH PREFIXS
 fi
 
-# Set XDG home
+# Set XDG Base Directories
 export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_DATA_HOME="${HOME}/.local/share"
+export XDG_CACHE_HOME="${HOME}/.cache"
+export XDG_STATE_HOME="${HOME}/.local/state"
 
 # if running bash
 if [ -n "${BASH_VERSION}" ]; then
@@ -77,37 +81,63 @@ fi
 
 # default editor and pager
 if [ ! "x${TERM}" = "x" ]; then
-  [ -x "/usr/bin/vim" ] && EDITOR=${EDITOR:=/usr/bin/vim} && export EDITOR
-  [ -x "/usr/bin/less" ] && PAGER=${PAGER:=/usr/bin/less} && export PAGER
+  [ -x "/usr/bin/vim" ] && export EDITOR=${EDITOR:=/usr/bin/vim}
+  [ -x "/usr/bin/less" ] && export PAGER=${PAGER:=/usr/bin/less}
+fi
+
+# set OSTYPE, when not using bash
+if [ OSTYPE="${OSTYPE:=$(uname -o 2> /dev/null)}" ]; then
+  :
+elif [ OSTYPE="$(uname -s 2> /dev/null)" ]; then
+  :
+else
+  OSTYPE="${OS:=}"
+fi
+# OSTYPE="$(echo ${OSTYPE} | tr [:upper:] [:lower:])" 2> /dev/null
+if [ "${OSTYPE}" ]; then
+  export OSTYPE
+else
+  export OSTYPE=unknown
 fi
 
 # if CYGWIN or MSYS, use Windows symbolic link
-if [ "${OSTYPE}" = "cygwin" ]; then
-  CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native" && export CYGWIN
-  EXEEXT=".exe" && export EXEEXT
-elif [ "${OSTYPE}" = "msys" ]; then
-  MSYS="${MSYS}${MSYS+ }winsymlinks:native" && export MSYS
-  EXEEXT=".exe" && export EXEEXT
-fi
+case "${OSTYPE}" in
+  cygwin|Cygwin|CYGWIN_NT*)
+    export CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native"
+    export EXEEXT=".exe"
+    ;;
+  msys|Msys|MINGW*)
+    export MSYS="${MSYS}${MSYS+ }winsymlinks:native"
+    export EXEEXT=".exe"
+    ;;
+  *)
+    ;;
+esac
 
-# Shell dependent settings from /usr/local/etc/profile.d
-local_profile_d ()
-{
+# Shell dependent settings from $1/profile.d
+read_profile_d() {
+  dir_profile_base="$1"
+  shift
   _LC_ALL_SET_="${LC_ALL+set}"
   _LC_SAVE_="${LC_ALL-null}"
   LC_ALL=C
   if [ "${_LC_SAVE_}" = "null" ]; then
-    for file in /usr/local/etc/profile.d/*.$1; do
+    for file in $dir_profile_base/profile.d/*.$1; do
       [ -e "${file}" ] && . "${file}"
     done
     unset LC_ALL
   else
-    for file in /usr/local/etc/profile.d/*.$1; do
+    for file in $dir_profile_base/profile.d/*.$1; do
       [ -e "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}"
     done
     LC_ALL="${_LC_SAVE_}"
   fi
   unset file _LC_ALL_SET_ _LC_SAVE_
+}
+
+# Shell dependent settings from /usr/local/etc/profile.d
+local_profile_d() {
+  read_profile_d /usr/local/etc $1
 }
 
 local_profile_d sh
