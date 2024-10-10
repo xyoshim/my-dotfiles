@@ -21,7 +21,7 @@ ui.merge-editor = "vscode"
 # ui.merge-editor = "kdiff3"
 
 [alias]
-bsh=["bookmark", "set", "-r", "@-"]
+bsh=["bookmark", "move", "--to", "@-", "--from"]
 alog=["log", "-r", "..@"]
 rlog=["log", "-r"]
 clog=["log", "-T", "builtin_log_comfortable"]
@@ -103,7 +103,7 @@ orootlog=["log", "-T", "builtin_log_oneline", "-r", "root()::"]
 # jj bookmark create -r @- future
 #
 # # jj newやjj commit後にブランチ(main)を先頭(@の直前)へ移動する
-# jj bookmark set -r @- main
+# jj bookmark move --from main --to @-
 #
 # # jj bookmark set後にgitのブランチ(main)の先頭をHEADにする
 # git switch main
