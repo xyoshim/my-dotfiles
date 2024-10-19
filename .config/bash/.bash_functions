@@ -71,7 +71,7 @@
 tmux() {
   TMUX="command tmux ${*}"
   case $OSTYPE in
-    cygwin*)
+    cygwin*|Cygwin*|CYGWIN*)
       $TMUX;;
     *)
       case $(tty) in

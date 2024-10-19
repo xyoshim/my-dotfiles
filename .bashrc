@@ -153,9 +153,11 @@ shopt -s histappend
 # Aliases
 #
 # Some people use a different file for aliases
-if [ -f "${HOME}/.bash_aliases" ]; then
-  source "${HOME}/.bash_aliases"
-fi
+for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
+  if [ -f "${d}/.bash_aliases" ]; then
+    source "${d}/.bash_aliases"
+  fi
+done
 #
 # Some example alias instructions
 # If these are enabled they will be used instead of any instructions
@@ -198,16 +200,21 @@ fi
 # Functions
 #
 # Some people use a different file for functions
-if [ -f "${HOME}/.bash_functions" ]; then
-  source "${HOME}/.bash_functions"
-fi
+for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
+  if [ -f "${d}/.bash_functions" ]; then
+    source "${d}/.bash_functions"
+  fi
+done
 
 # User specific aliases and functions
-if [ -d ~/.bashrc.d ]; then
-  for rc in ~/.bashrc.d/*; do
-    if [ -f "$rc" ]; then
-      . "$rc"
-    fi
-  done
-fi
+for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
+  if [ -d ${d}/.bashrc.d ]; then
+    for rc in ${d}/.bashrc.d/*; do
+      if [ -f "$rc" ]; then
+        . "$rc"
+      fi
+    done
+  fi
+done
 unset rc
+unset dir
