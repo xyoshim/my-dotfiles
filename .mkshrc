@@ -731,9 +731,12 @@ HISTSIZE=10000
 
 # alias ls='ls --color=auto'
 
-# Read common aliases
-if [ -f "${HOME}/.sh_aliases" ]; then
-	source "${HOME}/.sh_aliases"
-fi
+# read common aliases
+for d in ${HOME} ${XDG_CONFIG_HOME+$XDG_CONFIG_HOME/sh}; do
+	if [ -f "${d}/.sh_aliases" ]; then
+		. "${d}/.sh_aliases"
+	fi
+done
+unset d
 alias whence='\\builtin whence'
 alias where='\\builtin whence -v'
