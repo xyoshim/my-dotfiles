@@ -45,13 +45,15 @@ case "$-" in
     fi
     case ":${SHELLOPTS}:" in
       *:posix:*)
-        HISTFILE=${HOME}/.sh_history
+        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
+        HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
         ;;
       *)
+        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
+        HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
         if [ -f "${HOME}/.config/git/git-completion.bash" ]; then
           . "${HOME}/.config/git/git-completion.bash"
         fi
-        HISTFILE=${HOME}/.bash_history
         _have__git_ps1=no
         type __git_ps1 2> /dev/null > /dev/null
         if [ $? = 0 ]; then
@@ -89,6 +91,11 @@ case "$-" in
         ;;
     esac
     unset _have__git_ps1
+    if [ "$HISTFILE" ]; then
+      # [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
+      # [ -f "$HISTFILE" ] || touch $HISTFILE
+      \history -r
+    fi
     ;;
   *)
     return
@@ -97,7 +104,6 @@ esac
 
 # History settings
 [[ "$HISTCONTROL" != *ignoreboth* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
-# HISTFILE=${HOME}/.bash_history
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
