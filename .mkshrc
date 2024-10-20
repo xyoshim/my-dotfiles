@@ -704,7 +704,8 @@ for p in ~/bin ~/.local/bin ~/.etc/bin; do
 	    PATH=$p$PATHSEP$PATH
 done
 
-\\builtin export SHELL=$MKSH MANWIDTH=80 LESSHISTFILE=-
+# \\builtin export SHELL=$MKSH MANWIDTH=80 LESSHISTFILE=-
+\\builtin export SHELL=$MKSH MANWIDTH=80
 \\builtin alias cls='\\builtin print -n \\ec'
 
 #\\builtin unset LC_ADDRESS LC_COLLATE LC_CTYPE LC_IDENTIFICATION \
@@ -723,8 +724,9 @@ done
 
 [[ "$-" != *i* ]] && return
 
-HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
-HISTFILE=${HOME}/.mksh_history
+[[ "$HISTCONTROL" != *ignoreboth* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
+HISTFILE="${HISTFILE:=${HOME}/.ksh_history}"
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000

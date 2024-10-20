@@ -154,8 +154,8 @@ if [ "${BASH_VERSION}" ]; then
         HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
         ;;
     esac
-    mkdir -p $(dirname $HISTFILE)
-    touch $HISTFILE
+    [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
+    [ -f "$HISTFILE" ] || touch $HISTFILE
     \history -r
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
