@@ -723,8 +723,9 @@ done
 
 [[ "$-" != *i* ]] && return
 
-HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
-HISTFILE=${HOME}/.mksh_history
+[[ "$HISTCONTROL" != *ignoreboth* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/mksh/.mksh_history}"
+HISTFILE="${HISTFILE:=${HOME}/.mksh_history}"
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
