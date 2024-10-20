@@ -141,22 +141,39 @@ local_profile_d() {
 }
 
 local_profile_d sh
-if [ ! "x${BASH_VERSION}" = "x"  ]; then
+[ "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
+if [ "${BASH_VERSION}" ]; then
   local_profile_d bash
-  # : # HISTFILE=${HOME}/.bash_history
+    case ":${SHELLOPTS}:" in
+      *:posix:*)
+        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
+        HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
+        ;;
+      *)
+        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
+        HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
+        ;;
+    esac
+    [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
+    [ -f "$HISTFILE" ] || touch $HISTFILE
+    \history -r
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
-  HISTFILE=${HOME}/.ksh_history && export HISTFILE
+    HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
+    HISTFILE="${HISTFILE:=${HOME}/.ksh_history}"
 elif [ ! "x${ZSH_VERSION}" = "x" ]; then
   # zsh is in shell compatibility mode here, so we probably shouldn't do this
   local_profile_d zsh
-  HISTFILE=${HOME}/.zsh_history && export HISTFILE
-elif [ ! "x${POSH_VERSION}" = "x" ]; then
-  local_profile_d posh
-  HISTFILE=${HOME}/.posh_history && export HISTFILE
+  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/zsh_history}"
+  HISTFILE="${HISTFILE:=${HOME}/.zsh_history}"
 else
   PS1="$ "
 fi
+
+# history file of less
+LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
+LESSHISTFILE="${LESSHISTFILE:=${HOME}/.zsh_history}"
+export LESSHISTFILE
 
 # dotnet
 ## DOTNET_ROOT
