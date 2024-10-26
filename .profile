@@ -142,9 +142,11 @@ local_profile_d() {
 
 local_profile_d sh
 [ "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
+SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')")
 if [ "${BASH_VERSION}" ]; then
-    case ":${SHELLOPTS}:" in
-      *:posix:*)
+  local_profile_d bash
+    case ":${SHELLOPTS}:-${POSIXLY_CORRECT+POSIXLY_CORRECT}-${SHELLFILENAME}" in
+      *:posix:* | *-POSIXLY_CORRECT-* | *-sh)
         HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
         HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
         ;;
@@ -154,7 +156,9 @@ if [ "${BASH_VERSION}" ]; then
         ;;
     esac
     [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
-    # [ -f "$HISTFILE" ] || touch $HISTFILE
+    [ -f "$HISTFILE" ] || touch $HISTFILE
+    shopt -s histverify
+    shopt -s histappend
     \history -r
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
@@ -167,6 +171,8 @@ elif [ ! "x${ZSH_VERSION}" = "x" ]; then
   HISTFILE="${HISTFILE:=${HOME}/.zsh_history}"
 else
   PS1="$ "
+  PS2='> '
+  PS4='+ '
 fi
 
 # history file of less
@@ -176,10 +182,10 @@ export LESSHISTFILE
 
 # dotnet
 ## DOTNET_ROOT
-if [ -z "$DOTNET_ROOT" -o ! -x "${DOTNET_ROOT}/dotnet" ]; then
+if [ -z "$DOTNET_ROOT" ] || [ ! -x "${DOTNET_ROOT}/dotnet" ]; then
   unset DOTNET_ROOT
 fi
-if [ -z "$DOTNET_ROOT" -a -x "$HOME/.dotnet/dotnet" ]; then
+if [ -z "$DOTNET_ROOT" ] && [ -x "$HOME/.dotnet/dotnet" ]; then
   DOTNET_ROOT="$HOME/.dotnet" && export DOTNET_ROOT
 fi
 if [ -n  "$DOTNET_ROOT" ]; then
@@ -187,7 +193,7 @@ if [ -n  "$DOTNET_ROOT" ]; then
     [ $? != 0 ] && PATH="${DOTNET_ROOT}:${PATH}"
 fi
 ## DOTNET_TOOLS_PATH
-if [ -z "$DOTNET_TOOLS_PATH" -a -n "$DOTNET_ROOT" ]; then
+if [ -z "$DOTNET_TOOLS_PATH" ] && [ -n "$DOTNET_ROOT" ]; then
   DOTNET_TOOLS_PATH="$HOME/.dotnet/tools" && export DOTNET_TOOLS_PATH
 fi
 if [ -n  "$DOTNET_TOOLS_PATH" ]; then

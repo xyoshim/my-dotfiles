@@ -43,8 +43,8 @@ case "$-" in
     else
       PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
     fi
-    case ":${SHELLOPTS}:" in
-      *:posix:*)
+    case ":${SHELLOPTS}:-${POSIXLY_CORRECT+POSIXLY_CORRECT}-" in
+      *:posix:* | *-POSIXLY_CORRECT-*)
         HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
         HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
         ;;
@@ -94,6 +94,8 @@ case "$-" in
     if [ "$HISTFILE" ]; then
       # [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
       # [ -f "$HISTFILE" ] || touch $HISTFILE
+      shopt -s histverify
+      shopt -s histappend
       \history -r
     fi
     ;;
@@ -131,7 +133,7 @@ HISTSIZE=10000
 # shopt -s nocaseglob
 #
 # Make bash append rather than overwrite the history on disk
-shopt -s histappend
+# shopt -s histappend
 #
 # When changing directory small typos can be ignored by bash
 # for example, cd /vr/lgo/apaache would find /var/log/apache
