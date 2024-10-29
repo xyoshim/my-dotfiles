@@ -724,7 +724,7 @@ done
 
 [[ "$-" != *i* ]] && return
 
-[[ "$HISTCONTROL" != *ignoreboth* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+[[ "$HISTCONTROL" != *ignoredup* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoredup
 HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
 HISTFILE="${HISTFILE:=${HOME}/.ksh_history}"
 HISTFILESIZE=10000
