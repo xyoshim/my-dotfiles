@@ -24,7 +24,7 @@
 # User dependent .bashrc file
 
 # If not running interactively, don't do anything
-#[[ "$-" != *i* ]] && return
+[[ "$-" != *i* ]] && return
 
 # Not bash
 [ -z "${BASH_VERSION}" ] && return
@@ -34,78 +34,74 @@ if [ -f /etc/bashrc ]; then
   . /etc/bashrc
 fi
 
-case "$-" in
-  *i*)
-    if [ -n "${MSYSTEM}" ]; then
-      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\e[33m\]\w\[\e[0m\]\n\$ '
-    elif [ -n "${OSTYPE}" ]; then
-      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]$OSTYPE \[\e[33m\]\w\[\e[0m\]\n\$ '
-    else
-      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+export -n PS1
+unset PS1
+if [ "${MSYSTEM:-${OSTYPE}}" ]; then
+  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]${MSYSTEM:-${OSTYPE}} \[\e[33m\]\w\[\e[0m\]\n\$ '
+else
+  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+fi
+unset _have__git_ps1
+if shopt -oq posix; then
+  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
+  HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
+else
+  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
+  HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
+  if [ -f "${HOME}/.config/git/git-completion.bash" ]; then
+    . "${HOME}/.config/git/git-completion.bash"
+  fi
+  if __git_ps1 > /dev/null 2>&1; then
+    _have__git_ps1=yes
+  else
+    if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh" ]; then
+      . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh"
+      if __git_ps1 > /dev/null 2>&1; then
+        _have__git_ps1=yes
+      fi
     fi
-    case ":${SHELLOPTS}:-${POSIXLY_CORRECT+POSIXLY_CORRECT}-" in
-      *:posix:* | *-POSIXLY_CORRECT-*)
-        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
-        HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
+  fi
+  if [ "${_have__git_ps1}" = "yes" ]; then
+    case "${MSYSTEM:-${OSTYPE}}" in
+      msys|Msys|MINGW*)
+        PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
+        PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \[\033[33m\]\w\[\033[36m\]'
+        PS1="${PS1}"'`__git_ps1`'
+        PS1="${PS1}"'\[\033[0m\]\n$ '
         ;;
       *)
-        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
-        HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
-        if [ -f "${HOME}/.config/git/git-completion.bash" ]; then
-          . "${HOME}/.config/git/git-completion.bash"
-        fi
-        _have__git_ps1=no
-        type __git_ps1 2> /dev/null > /dev/null
-        if [ $? = 0 ]; then
-          _have__git_ps1=yes
-        else
-          if [ -f "${HOME}/.config/git/git-prompt.sh" ]; then
-            . "${HOME}/.config/git/git-prompt.sh"
-            type __git_ps1 2> /dev/null > /dev/null
-            if [ $? = 0 ]; then
-              _have__git_ps1=yes
-            fi
-          fi
-        fi
-        if [ "${_have__git_ps1}" = "yes" ]; then
-          case "${OSTYPE}" in
-            msys|Msys|MINGW*)
-              PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
-              PS1="${PS1}"'${MSYSTEM:=$OSTYPE} \[\033[33m\]\w\[\033[36m\]'
-              PS1="${PS1}"'`__git_ps1`'
-              PS1="${PS1}"'\[\033[0m\]\n$ '
-              ;;
-            *)
-              PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h '
-              [ -n "${OSTYPE}" ] && PS1="${PS1}"'\[\033[35m\]$OSTYPE '
-              PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
-            ;;
-          esac
-          GIT_PS1_SHOWDIRTYSTATE=true
-          GIT_PS1_SHOWUNTRACKEDFILES=true
-          GIT_PS1_SHOWSTASHSTATE=true
-          GIT_PS1_SHOWUPSTREAM=auto
-          GIT_PS1_SHOWCONFLICTSTATE=yes
-          GIT_PS1_SHOWCOLORHINTS=""
-        fi
-        ;;
+        PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h '
+        [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"'\[\033[35m\]${MSYSTEM:-${OSTYPE}} '
+        PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+      ;;
     esac
-    unset _have__git_ps1
-    if [ "$HISTFILE" ]; then
-      # [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
-      # [ -f "$HISTFILE" ] || touch $HISTFILE
-      shopt -s histverify
-      shopt -s histappend
-      \history -r
-    fi
-    ;;
-  *)
-    return
-    ;;
-esac
+    GIT_PS1_SHOWDIRTYSTATE=true
+    GIT_PS1_SHOWUNTRACKEDFILES=true
+    GIT_PS1_SHOWSTASHSTATE=true
+    GIT_PS1_SHOWUPSTREAM=auto
+    GIT_PS1_SHOWCONFLICTSTATE=yes
+    GIT_PS1_SHOWCOLORHINTS=""
+  fi
+fi
+unset _have__git_ps1
+
+if [ "$HISTFILE" ]; then
+  # [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
+  # [ -f "$HISTFILE" ] || touch $HISTFILE
+  shopt -s histverify
+  shopt -s histappend
+  \history -r
+fi
 
 # History settings
-[[ "$HISTCONTROL" != *ignoreboth* ]] && HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+case "$HISTCONTROL" in
+  *ignoreboth*)
+    ;;
+  *)
+    HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+  ;;
+esac
+export HISTCONTROL
 HISTFILESIZE=10000
 HISTIGNORE='[ \t]*:&:ls:ll:la:fg:bg:ps:top:df:du'
 HISTSIZE=10000
@@ -161,9 +157,9 @@ HISTSIZE=10000
 # Aliases
 #
 # Some people use a different file for aliases
-for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
+for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}" "${HOME}"; do
   if [ -f "${d}/.bash_aliases" ]; then
-    source "${d}/.bash_aliases"
+    . "${d}/.bash_aliases"
   fi
 done
 #
@@ -208,9 +204,9 @@ done
 # Functions
 #
 # Some people use a different file for functions
-for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
+for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}" "${HOME}"; do
   if [ -f "${d}/.bash_functions" ]; then
-    source "${d}/.bash_functions"
+    . "${d}/.bash_functions"
   fi
 done
 
@@ -225,4 +221,4 @@ for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
   fi
 done
 unset rc
-unset dir
+unset d
