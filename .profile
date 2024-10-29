@@ -86,22 +86,18 @@ if [ ! "x${TERM}" = "x" ]; then
 fi
 
 # set OSTYPE, when not using bash
-if [ OSTYPE="${OSTYPE:=$(uname -o 2> /dev/null)}" ]; then
+if OSTYPE="${OSTYPE:=$(uname -o 2> /dev/null)}"; then
   :
-elif [ OSTYPE="$(uname -s 2> /dev/null)" ]; then
+elif OSTYPE="$(uname -s 2> /dev/null)"; then
   :
 else
-  OSTYPE="${OS:=}"
+  OSTYPE="${OS:-unknown}"
 fi
 # OSTYPE="$(echo ${OSTYPE} | tr [:upper:] [:lower:])" 2> /dev/null
-if [ "${OSTYPE}" ]; then
-  export OSTYPE
-else
-  export OSTYPE=unknown
-fi
+export OSTYPE
 
 # if CYGWIN or MSYS, use Windows symbolic link
-case "${OSTYPE}" in
+case "${MSYSTEM:-${OSTYPE}}" in
   cygwin|Cygwin|CYGWIN_NT*)
     export CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native"
     export EXEEXT=".exe"
@@ -145,25 +141,21 @@ local_profile_d sh
 SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')")
 if [ "${BASH_VERSION}" ]; then
   local_profile_d bash
-    case ":${SHELLOPTS}:-${POSIXLY_CORRECT+POSIXLY_CORRECT}-${SHELLFILENAME}" in
-      *:posix:* | *-POSIXLY_CORRECT-* | *-sh)
-        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
-        HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
-        ;;
-      *)
-        HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
-        HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
-        ;;
-    esac
-    [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
-    [ -f "$HISTFILE" ] || touch $HISTFILE
-    shopt -s histverify
-    shopt -s histappend
-    \history -r
+  case ":${SHELLOPTS}:_${POSIXLY_CORRECT+POSIXLY_CORRECT}_${SHELLFILENAME}" in
+    *":posix:"* | *"_POSIXLY_CORRECT_"* | *"_sh")
+      HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
+      HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
+      ;;
+    *)
+      ;;
+  esac
+  PARENT_HISTFILE="$(dirname $HISTFILE)"
+  [ -d "${PARENT_HISTFILE}" ] || mkdir -p "${PARENT_HISTFILE}"
+  unset PARENT_HISTFILE
 elif [ ! "x${KSH_VERSION}" = "x" ]; then
   local_profile_d ksh
-    HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
-    HISTFILE="${HISTFILE:=${HOME}/.ksh_history}"
+  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
+  HISTFILE="${HISTFILE:=${HOME}/.ksh_history}"
 elif [ ! "x${ZSH_VERSION}" = "x" ]; then
   # zsh is in shell compatibility mode here, so we probably shouldn't do this
   local_profile_d zsh
@@ -177,7 +169,7 @@ fi
 
 # history file of less
 LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
-LESSHISTFILE="${LESSHISTFILE:=${HOME}/.zsh_history}"
+LESSHISTFILE="${LESSHISTFILE:=${HOME}/.lesshst}"
 export LESSHISTFILE
 
 # dotnet
