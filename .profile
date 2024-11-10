@@ -24,7 +24,7 @@
 # User dependent .profile file
 
 # Set user-defined locale
-[ locale -uU > /dev/null 2> /dev/null ] && export LANG="$(locale -uU)"
+[ locale -uU > /dev/null 2>&1 ] && export LANG="$(locale -uU)"
 
 # This file is not read by bash(1) if ~/.bash_profile or ~/.bash_login
 # exists.
@@ -33,37 +33,53 @@
 for TMP_PATH in /usr/local/bin "${HOME}/bin" "${HOME}/.local/bin" "${HOME}/.cargo/bin"
 do
   if [ -d "${TMP_PATH}" ]; then
-    echo ":${PATH}:" | /usr/bin/fgrep ":${TMP_PATH}:" > /dev/null 2> /dev/null
-    [ $? = 0 ] && PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${TMP_PATH}:|:|g")"
+    case :"${PATH}": in
+      *:"${TMP_PATH}":* )
+        PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${TMP_PATH}:|:|g")";;
+      *) ;;
+    esac
     PATH="${TMP_PATH}:${PATH}"
   fi
 done
-PATH="$(echo ${PATH} | /usr/bin/sed -e 's|::*|:|g' -e 's|^:||g' -e 's|:$||g')"
-export PATH
+export PATH="$(echo :"${PATH}": | /usr/bin/sed -E 's|:+|:|g' | sed -E 's|^:+||' | sed -E 's|:+$||')"
 unset TMP_PATH
 
 # Add path
 if [ x"${SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   SET_HOME_PROFILE_ENVVARS="yes"
-  PREFIXS="/usr/local "$HOME/.cargo" ${MSYSTEM_PREFIX}"
+  PREFIXS="/usr/local $HOME/.cargo $HOME/.local ${MSYSTEM_PREFIX}"
   if [ x"${MSYSTEM_PREFIX}" != x"${MINGW_PREFIX}" ]; then
     PREFIXS="${PREFIXS} ${MINGW_PREFIX}"
   fi
   MANPATH="${MANPATH:-/usr/share/man:/usr/man}"
   INFOPATH="${INFOPATH:-/usr/share/info:/usr/info}"
-  for TMP_PREFIX_PATH in ${PREFIXS}
-  do
-    echo ":${MANPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/man:" > /dev/null 2> /dev/null
-    [ $? != 0 ] && MANPATH="${TMP_PREFIX_PATH}/man:${MANPATH}"
-    echo ":${MANPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/share/man:" > /dev/null 2> /dev/null
-    [ $? != 0 ] && MANPATH="${TMP_PREFIX_PATH}/share/man:${MANPATH}"
-    echo ":${INFOPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/info:" > /dev/null 2> /dev/null
-    [ $? != 0 ] && INFOPATH="${TMP_PREFIX_PATH}/info:${INFOPATH}"
-    echo ":${INFOPATH}:" | /usr/bin/fgrep ":${TMP_PREFIX_PATH}/share/info:" > /dev/null 2> /dev/null
-    [ $? != 0 ] && INFOPATH="${TMP_PREFIX_PATH}/share/info:${INFOPATH}"
+  for TMP_PREFIX_PATH in ${PREFIXS}; do
+    for TMP_SUFFIX_PATH in man share/man; do
+      TMP_PATH="${TMP_PREFIX_PATH}/${TMP_SUFFIX_PATH}"
+      if [ -d "${TMP_PATH}" ]; then
+        case :"${MANPATH}": in
+          *:"${TMP_PATH}":* )
+            MANPATH="$(echo :${MANPATH}: | /usr/bin/sed -e "s|:${TMP_PATH}:|:|g")";;
+          *) ;;
+        esac
+        MANPATH="${TMP_PATH}:${MANPATH}"
+      fi
+    done
+    for TMP_SUFFIX_PATH in info share/info; do
+      TMP_PATH="${TMP_PREFIX_PATH}/${TMP_SUFFIX_PATH}"
+      if [ -d "${TMP_PATH}" ]; then
+        case :"${INFOPATH}": in
+          *:"${TMP_PATH}":* )
+            INFOPATH="$(echo :${INFOPATH}: | /usr/bin/sed -e "s|:${TMP_PATH}:|:|g")";;
+          *) ;;
+        esac
+        INFOPATH="${TMP_PATH}:${INFOPATH}"
+      fi
+    done
   done
-  export MANPATH INFOPATH
-  unset TMP_PREFIX_PATH PREFIXS
+  export MANPATH="$(echo :"${MANPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -E 's|^:+||' | /usr/bin/sed -E 's|:+$||')"
+  export INFOPATH="$(echo :"${INFOPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -E 's|^:+||' | /usr/bin/sed -E 's|:+$||')"
+  unset TMP_PREFIX_PATH TMP_SUFFIX_PATH PREFIXS
 fi
 
 # Set XDG Base Directories
@@ -181,7 +197,7 @@ if [ -z "$DOTNET_ROOT" ] && [ -x "$HOME/.dotnet/dotnet" ]; then
   DOTNET_ROOT="$HOME/.dotnet" && export DOTNET_ROOT
 fi
 if [ -n  "$DOTNET_ROOT" ]; then
-    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_ROOT}:" > /dev/null 2> /dev/null
+    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_ROOT}:" > /dev/null 2>&1
     [ $? != 0 ] && PATH="${DOTNET_ROOT}:${PATH}"
 fi
 ## DOTNET_TOOLS_PATH
@@ -189,7 +205,7 @@ if [ -z "$DOTNET_TOOLS_PATH" ] && [ -n "$DOTNET_ROOT" ]; then
   DOTNET_TOOLS_PATH="$HOME/.dotnet/tools" && export DOTNET_TOOLS_PATH
 fi
 if [ -n  "$DOTNET_TOOLS_PATH" ]; then
-    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_TOOLS_PATH}:" > /dev/null 2> /dev/null
+    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_TOOLS_PATH}:" > /dev/null 2>&1
     [ $? != 0 ] && PATH="${DOTNET_TOOLS_PATH}:${PATH}"
 fi
 export PATH
