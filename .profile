@@ -23,6 +23,10 @@
 
 # User dependent .profile file
 
+# Check for duplicate loading
+[ "$LOADED_HOME_PROFILE" = "yes" ] && return
+LOADED_HOME_PROFILE=yes
+
 # Set user-defined locale
 [ locale -uU > /dev/null 2>&1 ] && export LANG="$(locale -uU)"
 
@@ -126,7 +130,7 @@ case "${MSYSTEM:-${OSTYPE}}" in
     ;;
 esac
 
-# Shell dependent settings from $1/profile.d
+# Shell dependent settings from $1/*.$2
 read_profile_d() {
   dir_profile_base="$1"
   shift
@@ -134,12 +138,12 @@ read_profile_d() {
   _LC_SAVE_="${LC_ALL-null}"
   LC_ALL=C
   if [ "${_LC_SAVE_}" = "null" ]; then
-    for file in $dir_profile_base/profile.d/*.$1; do
+    for file in $dir_profile_base/*.$1; do
       [ -e "${file}" ] && . "${file}"
     done
     unset LC_ALL
   else
-    for file in $dir_profile_base/profile.d/*.$1; do
+    for file in $dir_profile_base/*.$1; do
       [ -e "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}"
     done
     LC_ALL="${_LC_SAVE_}"
@@ -149,7 +153,7 @@ read_profile_d() {
 
 # Shell dependent settings from /usr/local/etc/profile.d
 local_profile_d() {
-  read_profile_d /usr/local/etc $1
+  read_profile_d /usr/local/etc/profile.d $1
 }
 
 local_profile_d sh
@@ -186,26 +190,34 @@ fi
 # history file of less
 LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
 LESSHISTFILE="${LESSHISTFILE:=${HOME}/.lesshst}"
-export LESSHISTFILE
 
-# dotnet
-## DOTNET_ROOT
+# path of dotnet
+## Check existing variable "DOTNET_ROOT"
 if [ -z "$DOTNET_ROOT" ] || [ ! -x "${DOTNET_ROOT}/dotnet" ]; then
   unset DOTNET_ROOT
 fi
+## Check dotnet directory under $HOME
 if [ -z "$DOTNET_ROOT" ] && [ -x "$HOME/.dotnet/dotnet" ]; then
-  DOTNET_ROOT="$HOME/.dotnet" && export DOTNET_ROOT
+  export DOTNET_ROOT="$HOME/.dotnet"
 fi
+## add DOTNET_ROOT to PATH
 if [ -n  "$DOTNET_ROOT" ]; then
-    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_ROOT}:" > /dev/null 2>&1
-    [ $? != 0 ] && PATH="${DOTNET_ROOT}:${PATH}"
+  case :"${PATH}": in
+    *:"${DOTNET_ROOT}":* )
+      PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${DOTNET_ROOT}:|:|g")";;
+    *) ;;
+  esac
+  export PATH="${DOTNET_ROOT}:${PATH}"
 fi
-## DOTNET_TOOLS_PATH
+## add DOTNET_TOOLS_PATH to PATH
 if [ -z "$DOTNET_TOOLS_PATH" ] && [ -n "$DOTNET_ROOT" ]; then
-  DOTNET_TOOLS_PATH="$HOME/.dotnet/tools" && export DOTNET_TOOLS_PATH
+  export DOTNET_TOOLS_PATH="$DOTNET_ROOT/tools"
 fi
-if [ -n  "$DOTNET_TOOLS_PATH" ]; then
-    echo ":${PATH}:" | /usr/bin/fgrep ":${DOTNET_TOOLS_PATH}:" > /dev/null 2>&1
-    [ $? != 0 ] && PATH="${DOTNET_TOOLS_PATH}:${PATH}"
+if [ -n "$DOTNET_TOOLS_PATH" ]; then
+  case :"${PATH}": in
+    *:"${DOTNET_TOOLS_PATH}":* )
+      PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${DOTNET_TOOLS_PATH}:|:|g")";;
+    *) ;;
+  esac
+  export PATH="${DOTNET_TOOLS_PATH}:${PATH}"
 fi
-export PATH
