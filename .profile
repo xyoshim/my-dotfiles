@@ -16,9 +16,9 @@
 # setup from updating it.
 
 # The copy in your home directory (~/.profile) is yours, please
-# feel free to customise it to create a shell
+# feel free to customize it to create a shell
 # environment to your liking.  If you feel a change
-# would be benificial to all, please feel free to send
+# would be beneficial to all, please feel free to send
 # a patch to the cygwin mailing list.
 
 # User dependent .profile file
@@ -45,7 +45,7 @@ do
     PATH="${TMP_PATH}:${PATH}"
   fi
 done
-export PATH="$(echo :"${PATH}": | /usr/bin/sed -E 's|:+|:|g' | sed -E 's|^:+||' | sed -E 's|:+$||')"
+export PATH="$(echo :"${PATH}": | /usr/bin/sed -E 's|:+||' | /usr/bin/sed -e 's|^:|:|g' -e 's|:$||')"
 unset TMP_PATH
 
 # Add path
@@ -81,8 +81,8 @@ if [ x"${SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
       fi
     done
   done
-  export MANPATH="$(echo :"${MANPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -E 's|^:+||' | /usr/bin/sed -E 's|:+$||')"
-  export INFOPATH="$(echo :"${INFOPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -E 's|^:+||' | /usr/bin/sed -E 's|:+$||')"
+  export MANPATH="$(echo :"${MANPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|+$||')"
+  export INFOPATH="$(echo :"${INFOPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:+||' -e 's|:+$||')"
   unset TMP_PREFIX_PATH TMP_SUFFIX_PATH PREFIXS
 fi
 
@@ -91,6 +91,17 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_DATA_HOME="${HOME}/.local/share"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_STATE_HOME="${HOME}/.local/state"
+
+# set OSTYPE, when not using bash
+if OSTYPE="${OSTYPE:=$(uname -o 2> /dev/null)}"; then
+  :
+elif OSTYPE="$(uname -s 2> /dev/null)"; then
+  :
+else
+  OSTYPE="${OS:-unknown}"
+fi
+# OSTYPE="$(echo ${OSTYPE} | tr [:upper:] [:lower:])" 2> /dev/null
+export OSTYPE
 
 # if running bash
 if [ -n "${BASH_VERSION}" ]; then
@@ -104,17 +115,6 @@ if [ ! "x${TERM}" = "x" ]; then
   [ -x "/usr/bin/vim" ] && export EDITOR=${EDITOR:=/usr/bin/vim}
   [ -x "/usr/bin/less" ] && export PAGER=${PAGER:=/usr/bin/less}
 fi
-
-# set OSTYPE, when not using bash
-if OSTYPE="${OSTYPE:=$(uname -o 2> /dev/null)}"; then
-  :
-elif OSTYPE="$(uname -s 2> /dev/null)"; then
-  :
-else
-  OSTYPE="${OS:-unknown}"
-fi
-# OSTYPE="$(echo ${OSTYPE} | tr [:upper:] [:lower:])" 2> /dev/null
-export OSTYPE
 
 # if CYGWIN or MSYS, use Windows symbolic link
 case "${MSYSTEM:-${OSTYPE}}" in
@@ -151,14 +151,24 @@ read_profile_d() {
   unset file _LC_ALL_SET_ _LC_SAVE_
 }
 
-# Shell dependent settings from /usr/local/etc/profile.d
+# Shell dependent settings from /usr/local/etc/profile.d/*.$1
 local_profile_d() {
   read_profile_d /usr/local/etc/profile.d $1
 }
 
 local_profile_d sh
-[ "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
-SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')")
+[ "${XDG_STATE_HOME}" ] && [ ! -d "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
+
+# Get shell filename
+case "${MSYSTEM:-${OSTYPE}}" in
+  cygwin|Cygwin|CYGWIN_NT*|msys|Msys|MINGW*)
+    SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')") ;;
+  linux*|Linux*|LINUX*)
+    SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $4}')") ;;
+  *)
+    unset SHELLFILENAME ;;
+esac
+
 if [ "${BASH_VERSION}" ]; then
   local_profile_d bash
   case ":${SHELLOPTS}:_${POSIXLY_CORRECT+POSIXLY_CORRECT}_${SHELLFILENAME}" in
@@ -203,7 +213,7 @@ fi
 ## add DOTNET_ROOT to PATH
 if [ -n  "$DOTNET_ROOT" ]; then
   case :"${PATH}": in
-    *:"${DOTNET_ROOT}":* )
+    *:"${DOTNET_ROOT}":*)
       PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${DOTNET_ROOT}:|:|g")";;
     *) ;;
   esac
