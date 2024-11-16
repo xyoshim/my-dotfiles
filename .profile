@@ -51,7 +51,7 @@ unset TMP_PATH
 # Add path
 if [ x"${SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
   SET_HOME_PROFILE_ENVVARS="yes"
-  PREFIXS="/usr/local $HOME/.cargo $HOME/.local ${MSYSTEM_PREFIX}"
+  PREFIXS="/usr/local ${HOME}/.cargo ${HOME}/.local ${MSYSTEM_PREFIX}"
   if [ x"${MSYSTEM_PREFIX}" != x"${MINGW_PREFIX}" ]; then
     PREFIXS="${PREFIXS} ${MINGW_PREFIX}"
   fi
@@ -87,13 +87,13 @@ if [ x"${SET_HOME_PROFILE_ENVVARS}" != x"yes" ]; then
 fi
 
 # Set XDG Base Directories
-export XDG_CONFIG_HOME="${HOME}/.config"
-export XDG_DATA_HOME="${HOME}/.local/share"
-export XDG_CACHE_HOME="${HOME}/.cache"
-export XDG_STATE_HOME="${HOME}/.local/state"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
 
 # set OSTYPE, when not using bash
-if OSTYPE="${OSTYPE:=$(uname -o 2> /dev/null)}"; then
+if OSTYPE="${OSTYPE:-$(uname -o 2> /dev/null)}"; then
   :
 elif OSTYPE="$(uname -s 2> /dev/null)"; then
   :
@@ -112,8 +112,8 @@ fi
 
 # default editor and pager
 if [ ! "x${TERM}" = "x" ]; then
-  [ -x "/usr/bin/vim" ] && export EDITOR=${EDITOR:=/usr/bin/vim}
-  [ -x "/usr/bin/less" ] && export PAGER=${PAGER:=/usr/bin/less}
+  [ -x "/usr/bin/vim" ] && export EDITOR=${EDITOR:-/usr/bin/vim}
+  [ -x "/usr/bin/less" ] && export PAGER=${PAGER:-/usr/bin/less}
 fi
 
 # if CYGWIN or MSYS, use Windows symbolic link
@@ -174,7 +174,7 @@ if [ "${BASH_VERSION}" ]; then
   case ":${SHELLOPTS}:_${POSIXLY_CORRECT+POSIXLY_CORRECT}_${SHELLFILENAME}" in
     *":posix:"* | *"_POSIXLY_CORRECT_"* | *"_sh")
       HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
-      HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
+      HISTFILE="${HISTFILE:-${HOME}/.sh_history}"
       ;;
     *)
       ;;
@@ -182,15 +182,15 @@ if [ "${BASH_VERSION}" ]; then
   PARENT_HISTFILE="$(dirname $HISTFILE)"
   [ -d "${PARENT_HISTFILE}" ] || mkdir -p "${PARENT_HISTFILE}"
   unset PARENT_HISTFILE
-elif [ ! "x${KSH_VERSION}" = "x" ]; then
+elif [ "${KSH_VERSION}" ]; then
   local_profile_d ksh
   HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
-  HISTFILE="${HISTFILE:=${HOME}/.ksh_history}"
-elif [ ! "x${ZSH_VERSION}" = "x" ]; then
+  HISTFILE="${HISTFILE:-${HOME}/.ksh_history}"
+elif [ "${ZSH_VERSION}" ]; then
   # zsh is in shell compatibility mode here, so we probably shouldn't do this
   local_profile_d zsh
   HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/zsh_history}"
-  HISTFILE="${HISTFILE:=${HOME}/.zsh_history}"
+  HISTFILE="${HISTFILE:-${HOME}/.zsh_history}"
 else
   PS1="$ "
   PS2='> '
@@ -199,19 +199,19 @@ fi
 
 # history file of less
 LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
-LESSHISTFILE="${LESSHISTFILE:=${HOME}/.lesshst}"
+LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
 
 # path of dotnet
 ## Check existing variable "DOTNET_ROOT"
-if [ -z "$DOTNET_ROOT" ] || [ ! -x "${DOTNET_ROOT}/dotnet" ]; then
+if [ ! "${DOTNET_ROOT}" ] || [ ! -x "${DOTNET_ROOT}/dotnet" ]; then
   unset DOTNET_ROOT
 fi
-## Check dotnet directory under $HOME
-if [ -z "$DOTNET_ROOT" ] && [ -x "$HOME/.dotnet/dotnet" ]; then
-  export DOTNET_ROOT="$HOME/.dotnet"
+## Check dotnet directory under ${HOME}
+if [ ! "${DOTNET_ROOT}" ] && [ -x "${HOME}/.dotnet/dotnet" ]; then
+  export DOTNET_ROOT="${HOME}/.dotnet"
 fi
 ## add DOTNET_ROOT to PATH
-if [ -n  "$DOTNET_ROOT" ]; then
+if [ "${DOTNET_ROOT}" ]; then
   case :"${PATH}": in
     *:"${DOTNET_ROOT}":*)
       PATH="$(echo :${PATH}: | /usr/bin/sed -e "s|:${DOTNET_ROOT}:|:|g")";;
@@ -220,8 +220,8 @@ if [ -n  "$DOTNET_ROOT" ]; then
   export PATH="${DOTNET_ROOT}:${PATH}"
 fi
 ## add DOTNET_TOOLS_PATH to PATH
-if [ -z "$DOTNET_TOOLS_PATH" ] && [ -n "$DOTNET_ROOT" ]; then
-  export DOTNET_TOOLS_PATH="$DOTNET_ROOT/tools"
+if [ -z "${DOTNET_TOOLS_PATH}" ] && [ -n "${DOTNET_ROOT}" ]; then
+  export DOTNET_TOOLS_PATH="${DOTNET_ROOT}/tools"
 fi
 if [ -n "$DOTNET_TOOLS_PATH" ]; then
   case :"${PATH}": in
