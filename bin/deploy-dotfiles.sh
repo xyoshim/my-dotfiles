@@ -9,6 +9,9 @@ usage() {
   echo '--sourcedir[=dir] | -s [dir] ... The source directory.'
   echo '                                 If this option is omitted,'
   echo '                                 use "$HOME/dotfiles.cygwin64".'
+  echo '--suffix-backup[=str] | -b [str] ... The suffix of backup file.'
+  echo '                                     If this option is omitted,'
+  echo '                                     use ".bak".'
   echo '--dry-run | -n               ... Do not actually change any files,'
   echo '                                 just print what would happen.'
   echo '--help | -h                  ... Print this message.'
@@ -19,96 +22,104 @@ dry_run=no
 unset dirname_target dirname_source
 dirname_target_default="$HOME"
 dirname_source_default="$HOME/dotfiles.gitbash"
-
-# check if the source realpath is same as the target realpath.
-#   $1 : path of source file
-#   $2 : path of target file
-is_same_realpath() {
-  src_realpath="$(realpath -P "$1" 2> /dev/null)" || unset src_realpath
-  tgt_realpath="$(realpath -P "$2" 2> /dev/null)" || unset tgt_realpath
-  if [ -f "${tgt_realpath}" ] && [ "${src_realpath}" = "${tgt_realpath}" ]; then
-    value_return=0
-  else
-    value_return=1
-  fi
-  unset src_realpath tgt_realpath
-  return $value_return
-}
+suffix_backup=".bak"
+regex_exclude_deploy='(/(\.jj|\.git|\.vscode)/|(\.bak|\.orig|\.rej|\.*history|\.lesshst|\.viminfo|\.gitattributes|\.gitignore|\.editorconfig|/~.*|\.~.*|0)(/|$))'
 
 # exit with error message and error code.
 #   $1 : error code
 #   $2 : error message
-errot_exit() {
-  echo "$2"
+exit_with_error() {
+  echo "$2" >&2
   exit $1
 }
 
+# backup file with suffix.
+#   $1 : file name
+#   $2 : suffix for backup file name
+backup_file_with_suffix() {
+  mv "$1" "$1$2"
+  return $?
+}
+
+# create directory if not exists.
+#   $1 : directory name
+mkdir_if_not_exists() {
+  if [ -d "$1" ]; then
+    return 0
+  else
+    mkdir -p "$1"
+    return $?
+  fi
+}
+
 # create symlink, when source realpath is not same as the target realpath.
-#   $1 : link source filenames
-#   $2 : link source directory
+#   $1 : link source directory
+#   $2 : link source filenames
 #   $3 : link target directory
-deply_dotfiles_link() {
-  for f in $1; do
+deploy_dotfiles_link() {
+  for f in $2; do
     # Get the filename and directory name.
     dirname_f="$(dirname ${f})"
-    dirname_src="$(realpath $2/${dirname_f})"
-    filename_src="$(basename ${f})"
-    dirname_tgt="$3/${dirname_f}"
-    [ -L "$dirname_tgt" ] && dirname_tgt="$(realpath -s $3/${dirname_f})"
-    filename_tgt="${filename_src}"
-    should_deploy=no
-    fullpath_src_realpath="$(realpath -P ${dirname_src}/${filename_src} 2> /dev/null)" || unset fullpath_src_realpath
-    fullpath_tgt_realpath="$(realpath -P ${dirname_tgt}/${filename_tgt} 2> /dev/null)" || unset fullpath_tgt_realpath
-    # Check if the realpath is the same.
-    if is_same_realpath "$fullpath_src_realpath" "$fullpath_tgt_realpath"; then
-      should_deploy=no
-    else
-      should_deploy=yes
-    fi
+    dirname_source="$1/${dirname_f}"
+    filename_source="$(basename ${f})"
+    dirname_target="$3/${dirname_f}"
+    filename_target="${filename_source}"
+    # Get the realpath of the source and target files.
+    fullpath_source="${dirname_source}/${filename_source}"
+    fullpath_target="${dirname_target}/${filename_target}"
+    fullpath_source_realpath="$(realpath -P "${fullpath_source}" 2>/dev/null)" || unset fullpath_source_realpath
+    fullpath_target_realpath="$(realpath -P "${fullpath_target}" 2>/dev/null)" || unset fullpath_target_realpath
+    # If realpath is same, already deployed.
+    [ "$fullpath_source_realpath" = "$fullpath_target_realpath" ] && already_deployed=yes || already_deployed=no
+    # check if target file exists.
+    [ -f "${fullpath_target}" ] && exist_target=yes || exist_target=no
     # backup original target file.
-    if [ -f "${dirname_tgt}/${filename_tgt}" ]; then
-      if [ "${dry_run}" = "no" ]; then
-        if [ "${should_deploy}" = "yes" ]; then
-          if mv "${dirname_tgt}/${filename_tgt}" "${dirname_tgt}/${filename_tgt}.bak"; then
-            echo "Rename : ${dirname_tgt}/${filename_tgt} -> ${dirname_tgt}/${filename_tgt}.bak"
-          else
-            errot_exit $? "Error: Failed to rename ${dirname_tgt}/${filename_tgt} -> ${dirname_tgt}/${filename_tgt}.bak"
-          fi
-        fi
+    case "${dry_run}-${already_deployed}-${exist_target}" in
+    "no-no-yes")
+      ## backup original target file, when not symlink to source file.
+      if backup_file_with_suffix "${fullpath_target}" "${suffix_backup}"; then
+        echo "Rename : ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
       else
-        [ "${should_deploy}" = "yes" ] && echo "Would rename : ${dirname_tgt}/${filename_tgt} -> ${dirname_tgt}/${filename_tgt}.bak"
+        exit_with_error $? "Error: Failed to rename ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
       fi
-    fi
+      ;;
+    "yes-no-yes")
+      ## show message 'Would rename', when dry-run.
+      echo "Would rename : ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
+      ;;
+    *) ;;
+    esac
     # deploy dotfiles.
-    if [ "${dry_run}" = "no" ]; then
-      if [ "${should_deploy}" = "yes" ]; then
-        dirname_tgt_parent="$(dirname "${dirname_tgt}/${filename_tgt}")"
-        # Create the directory if it does not exist.
-        if [ ! -d "${dirname_tgt_parent}" ]; then
-          if mkdir -p "${dirname_tgt_parent}"; then
-            :
-          else
-            errot_exit $? "Error: Failed to create directory ${dirname_tgt_parent}."
-          fi
-        fi
-        # Create a symlink.
-        if ln -s "${dirname_src}/${filename_src}" "${dirname_tgt}/${filename_tgt}"; then
-          echo "Link : ${dirname_src}/${filename_src} -> ${dirname_tgt}/${filename_tgt}"
-        else
-          errot_exit $? "Error: Failed to create symlink for ${dirname_src}/${filename_src} -> ${dirname_tgt}/${filename_tgt}"
-        fi
-      # already deployed.
+    case "${dry_run}-${already_deployed}" in
+    ## do deploy, when not dry-run and not already-deployed.
+    "no-no")
+      ### Create the directory for symlink, if it does not exist.
+      if mkdir_if_not_exists "$(dirname "${fullpath_target}")"; then
+        :
       else
-        echo "Already deployed : ${dirname_src}/${filename_src} -> ${dirname_tgt}/${filename_tgt}"
+        exit_with_error $? "Error: Failed to create directory ${dirname_target_parent}."
       fi
-    # when dry run, show message(create symlink or skip).
-    else
-      if [ "${should_deploy}" = "yes" ]; then
-        echo "Would link : ${dirname_src}/${filename_src} -> ${dirname_tgt}/${filename_tgt}"
+      ### Create a symlink.
+      if ln -s "${fullpath_source}" "${fullpath_target}"; then
+        echo "Link : ${fullpath_source} -> ${fullpath_target}"
       else
-        echo "Would skip : ${dirname_src}/${filename_src} -> ${dirname_tgt}/${filename_tgt}"
+        exit_with_error $? "Error: Failed to create symlink for ${fullpath_source} -> ${fullpath_target}"
       fi
-    fi
+      ;;
+    ## show message 'Already-deployed', when not dry-run and already-deployed.
+    "no-yes")
+      echo "Already deployed : ${fullpath_source} -> ${fullpath_target}"
+      ;;
+    ## show message 'Would link', when dry-run and not already-deployed.
+    "yes-no")
+      echo "Would link : ${fullpath_source} -> ${fullpath_target}"
+      ;;
+    ## show message 'Would skip', when dry-run and already-deployed.
+    "yes-yes")
+      echo "Would skip : ${fullpath_source} -> ${fullpath_target}"
+      ;;
+    *) ;;
+    esac
   done
 }
 
@@ -119,59 +130,67 @@ while [ $# != 0 ]; do
   optarg=
 
   case $option in
-    -h | --help)
-      usage
-      exit 0;;
-    -n | --dry-run)
-      dry_run=yes;;
-    -t | --targetdir)
-      if [ $# > 0 ]; then
-        dirname_target="$1"
-        shift
-      fi
-      ;;
-    --targetdir=*)
-      dirname_target="$(echo ${option} | sed 's|--targetdir=||')"
-      ;;
-    -s | --sourcedir)
-      if [ $# > 0 ]; then
-        dirname_source="$1"
-        shift
-      fi
-      ;;
-    --sourcedir=*)
-      dirname_source="$(echo ${option} | sed 's|--sourcedir=||')"
-      ;;
-    --)
-      break;;
-    *)
-      echo "$0 unsupported option '${option}'"
-      usage
-      exit 1;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -n | --dry-run)
+    dry_run=yes
+    ;;
+  -t | --targetdir)
+    if [ $# ] >0; then
+      dirname_target="$1"
+      shift
+    fi
+    ;;
+  --targetdir=*)
+    dirname_target="$(echo ${option} | sed 's|--targetdir=||')"
+    ;;
+  -s | --sourcedir)
+    if [ $# ] >0; then
+      dirname_source="$1"
+      shift
+    fi
+    ;;
+  --sourcedir=*)
+    dirname_source="$(echo ${option} | sed 's|--sourcedir=||')"
+    ;;
+  --)
+    break
+    ;;
+  *)
+    echo "$0 unsupported option '${option}'"
+    usage
+    exit 1
+    ;;
   esac
 done
 [ "${dirname_source}" = "" ] && unset dirname_source
 [ "${dirname_target}" = "" ] && unset dirname_target
 
 # Home directory
-dir_src_base="${dirname_source:-$dirname_source_default}"
-dir_tgt_base="${dirname_target:-$dirname_target_default}"
-echo "Deploy dotfiles from ${dir_src_base} to ${dir_tgt_base}"
-if [ -d "${dir_src_base}" ]; then
-  files_src="$(cd $dir_src_base && find . -type f -print | grep -Ev '(^./(.jj|.git|.vscode)/|.(bak|orig|rej)$|.*history|.lesshst|.viminfo|.gitattributes|.gitignore|.editorconfig|/etc/profile.d/|/~|/.~|0)')"
-  deply_dotfiles_link "${files_src}" "${dir_src_base}" "${dir_tgt_base}"
+dir_source_base="${dirname_source:-$dirname_source_default}"
+dir_target_base="${dirname_target:-$dirname_target_default}"
+echo "Deploy dotfiles from ${dir_source_base} to ${dir_target_base}"
+if [ -d "${dir_source_base}" ]; then
+  files_source="$(cd $dir_source_base && find . -type f -print | grep -Ev "(${regex_exclude_deploy}|/etc/profile\.d/)")"
+  deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
 else
-  echo "Warning: Directory ${dir_src_base} does not exist."
+  echo "Warning: Directory ${dir_source_base} does not exist."
 fi
 
 # /usr/local/etc
-dir_src_base="${dirname_source:-$dirname_source_default}/etc"
-dir_tgt_base="${dirname_target:+$dirname_target}/usr/local/etc"
-if [ -d "${dir_src_base}" ]; then
-  files_src="$(cd $dir_src_base && find . -type f -print | grep -Ev '(^./(.jj|.git|.vscode)/|.(bak|orig|rej)$|.*history|.lesshst|.viminfo|.gitattributes|.gitignore|.editorconfig|/~|/.~)')"
-  deply_dotfiles_link "${files_src}" "${dir_src_base}" "${dir_tgt_base}"
+dir_source_base="${dirname_source:-$dirname_source_default}/etc"
+if [ "$(realpath "${dirname_target}")" = "$(realpath "${dirname_target_default}")" ]; then
+  dir_target_base="/usr/local/etc"
 else
-  echo "Warning: Directory ${dir_src_base} does not exist."
+  dir_target_base="${dirname_target}/usr/local/etc"
+fi
+if [ -d "${dir_source_base}" ]; then
+  files_source="$(cd $dir_source_base && find . -type f -print | grep -Ev "${regex_exclude_deploy}")"
+  deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
+else
+  echo "Warning: Directory ${dir_source_base} does not exist."
 fi
 
 exit 0
