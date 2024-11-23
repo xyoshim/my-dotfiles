@@ -12,7 +12,7 @@ unset d
 alias where='\type -a'          # where
 alias whence='\type'            # where, of a sort
 
-# jujutsu complition
+# jujutsu completion
 # $ jj util completion bash > "${XDG_CONFIG_HOME:-$HOME/.config}/jj/jj-completion.bash"
 d="${XDG_CONFIG_HOME:-$HOME/.config}"
 if [ -f "${d}/jj/jj-completion.bash" ]; then
