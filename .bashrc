@@ -16,9 +16,9 @@
 # setup from updating it.
 
 # The copy in your home directory (~/.bashrc) is yours, please
-# feel free to customise it to create a shell
+# feel free to customize it to create a shell
 # environment to your liking.  If you feel a change
-# would be benifitial to all, please feel free to send
+# would be beneficial to all, please feel free to send
 # a patch to the cygwin mailing list.
 
 # User dependent .bashrc file
@@ -138,7 +138,7 @@ HISTSIZE=10000
 # shopt -s cdspell
 
 # Programmable completion enhancements are enabled via
-# /etc/profile.d/bash_completion.sh when the package bash_completetion
+# /etc/profile.d/bash_completion.sh when the package bash_completion
 # is installed.  Any completions you add in ~/.bash_completion are
 # sourced last.
 
