@@ -57,6 +57,13 @@ mkdir_if_not_exists() {
 #   $2 : link source filenames
 #   $3 : link target directory
 deploy_dotfiles_link() {
+  # backup original variables.
+  dirname_source_original="${dirname_source-unset}"
+  filename_source_original="${filename_source-unset}"
+  fullpath_source_original="${fullpath_source-unset}"
+  dirname_target_original="${dirname_target-unset}"
+  filename_target_original="${filename_target-unset}"
+  fullpath_target_original="${fullpath_target-unset}"
   for f in $2; do
     # Get the filename and directory name.
     dirname_f="$(dirname ${f})"
@@ -121,6 +128,13 @@ deploy_dotfiles_link() {
     *) ;;
     esac
   done
+  # restore original variables.
+  [ "${dirname_source_original}" != "unset" ] && dirname_source="${dirname_source_original}" || unset dirname_source
+  [ "${filename_source_original}" != "unset" ] && filename_source="${filename_source_original}" || unset filename_source
+  [ "${fullpath_source_original}" != "unset" ] && fullpath_source="${fullpath_source_original}" || unset fullpath_source
+  [ "${dirname_target_original}" != "unset" ] && dirname_target="${dirname_target_original}" || unset dirname_target
+  [ "${filename_target_original}" != "unset" ] && filename_target="${filename_target_original}" || unset filename_target
+  [ "${fullpath_target_original}" != "unset" ] && fullpath_target="${fullpath_target_original}" || unset fullpath_target
 }
 
 # parse arguments.
@@ -173,7 +187,7 @@ dir_source_base="${dirname_source:-$dirname_source_default}"
 dir_target_base="${dirname_target:-$dirname_target_default}"
 echo "Deploy dotfiles from ${dir_source_base} to ${dir_target_base}"
 if [ -d "${dir_source_base}" ]; then
-  files_source="$(cd $dir_source_base && find . -type f -print | grep -Ev "(${regex_exclude_deploy}|/etc/profile\.d/)")"
+  files_source="$(cd $dir_source_base && find . -type f -print -o -type l -print | grep -Ev "(${regex_exclude_deploy}|/etc/profile\.d/)")"
   deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
 else
   echo "Warning: Directory ${dir_source_base} does not exist."
@@ -181,7 +195,7 @@ fi
 
 # /usr/local/etc
 dir_source_base="${dirname_source:-$dirname_source_default}/etc"
-if [ "$(realpath "${dirname_target}")" = "$(realpath "${dirname_target_default}")" ]; then
+if [ "$(realpath "${dirname_target}" 2>/dev/null)" = "$(realpath "${dirname_target_default}" 2>/dev/null)" ]; then
   dir_target_base="/usr/local/etc"
 else
   dir_target_base="${dirname_target}/usr/local/etc"
