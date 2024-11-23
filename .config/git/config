@@ -1,13 +1,13 @@
 [core]
 	autocrlf = false
-	filemode = false
+	filemode = true
 	safecrlf = warn
 	ignorecase = false
 	editor = "/usr/bin/env" "vim"
 	pager = "/usr/bin/env" "less" "-FRX"
 	quotepath = false
 	symlinks = true
-	longPaths=true
+	longPaths = true
 [user]
 	name = MVA
 	email = mva000@gmail.com
