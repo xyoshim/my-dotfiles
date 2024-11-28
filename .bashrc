@@ -36,56 +36,68 @@ elif [ -f /etc/bash.bashrc ]; then
   . /etc/bash.bashrc
 fi
 
+# Load shell common functions
+if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions" ]; then
+  . "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions"
+elif [ -f "${HOME}/.sh_functions" ]; then
+  . "${HOME}/.sh_functions"
+fi
+
+# set history file
+if shopt -oq posix; then
+  HISTFILE="${XDG_STATE_HOME:+${XDG_STATE_HOME}/sh_history}"
+  HISTFILE="${HISTFILE:-${HOME}/.sh_history}"
+else
+  HISTFILE="${XDG_STATE_HOME:+${XDG_STATE_HOME}/bash_history}"
+  HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
+fi
+
 export -n PS1
 unset PS1
+export OSTYPE="${OSTYPE:-$(get_ostype)}"
+export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
 if [ "${MSYSTEM:-${OSTYPE}}" ]; then
   PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]${MSYSTEM:-${OSTYPE}} \[\e[33m\]\w\[\e[0m\]\n\$ '
 else
   PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 fi
 unset _have__git_ps1
-if shopt -oq posix; then
-  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
-  HISTFILE="${HISTFILE:=${HOME}/.sh_history}"
+if __git_ps1 > /dev/null 2>&1; then
+  _have__git_ps1=yes
 else
-  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
-  HISTFILE="${HISTFILE:=${HOME}/.bash_history}"
-  if [ -f "${HOME}/.config/git/git-completion.bash" ]; then
-    . "${HOME}/.config/git/git-completion.bash"
+  if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh" ]; then
+    . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh"
   fi
   if __git_ps1 > /dev/null 2>&1; then
     _have__git_ps1=yes
-  else
-    if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh" ]; then
-      . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh"
-      if __git_ps1 > /dev/null 2>&1; then
-        _have__git_ps1=yes
-      fi
-    fi
-  fi
-  if [ "${_have__git_ps1}" = "yes" ]; then
-    case "${MSYSTEM:-${OSTYPE}}" in
-      msys|Msys|MINGW*)
-        PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
-        PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \[\033[33m\]\w\[\033[36m\]'
-        PS1="${PS1}"'`__git_ps1`'
-        PS1="${PS1}"'\[\033[0m\]\n$ '
-        ;;
-      *)
-        PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h '
-        [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"'\[\033[35m\]${MSYSTEM:-${OSTYPE}} '
-        PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
-      ;;
-    esac
-    GIT_PS1_SHOWDIRTYSTATE=true
-    GIT_PS1_SHOWUNTRACKEDFILES=true
-    GIT_PS1_SHOWSTASHSTATE=true
-    GIT_PS1_SHOWUPSTREAM=auto
-    GIT_PS1_SHOWCONFLICTSTATE=yes
-    GIT_PS1_SHOWCOLORHINTS=""
   fi
 fi
-unset _have__git_ps1
+if [ "${_have__git_ps1}" = "yes" ]; then
+  case "${OSTYPE_LOWER}" in
+    msys*|mingw*)
+      PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
+      PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \[\033[33m\]\w\[\033[36m\]'
+      PS1="${PS1}"'`__git_ps1`'
+      PS1="${PS1}"'\[\033[0m\]\n$ '
+      ;;
+    *)
+      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h '
+      [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"'\[\033[35m\]${MSYSTEM:-${OSTYPE}} '
+      PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+    ;;
+  esac
+  GIT_PS1_SHOWDIRTYSTATE=true
+  GIT_PS1_SHOWUNTRACKEDFILES=true
+  GIT_PS1_SHOWSTASHSTATE=true
+  GIT_PS1_SHOWUPSTREAM=auto
+  GIT_PS1_SHOWCONFLICTSTATE=yes
+  GIT_PS1_SHOWCOLORHINTS=""
+  if ! type ___git_complete > /dev/null 2>&1 ; then
+    if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-completion.bash" ]; then
+      . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-completion.bash"
+    fi
+  fi
+fi
 
 if [ "$HISTFILE" ]; then
   # [ -d "$(dirname $HISTFILE)" ] || mkdir -p "$(dirname $HISTFILE)"
@@ -100,7 +112,7 @@ case "$HISTCONTROL" in
   *ignoreboth*)
     ;;
   *)
-    HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoreboth
+    HISTCONTROL=${HISTCONTROL}${HISTCONTROL:+,}ignoreboth
   ;;
 esac
 export HISTCONTROL
