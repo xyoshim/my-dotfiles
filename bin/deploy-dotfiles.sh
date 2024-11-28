@@ -54,22 +54,20 @@ mkdir_if_not_exists() {
 
 # create symlink, when source realpath is not same as the target realpath.
 #   $1 : link source directory
-#   $2 : link source filenames
+#   $2 : link source filenames (relative from $1)
 #   $3 : link target directory
 deploy_dotfiles_link() {
   # backup original variables.
   dirname_source_original="${dirname_source-unset}"
   filename_source_original="${filename_source-unset}"
-  fullpath_source_original="${fullpath_source-unset}"
   dirname_target_original="${dirname_target-unset}"
   filename_target_original="${filename_target-unset}"
-  fullpath_target_original="${fullpath_target-unset}"
   for f in $2; do
     # Get the filename and directory name.
-    dirname_f="$(dirname ${f})"
-    dirname_source="$1/${dirname_f}"
+    [ "$(dirname ${f})" = "." ] && dirname_f="" || dirname_f="$(dirname ${f})"
+    dirname_source="$1${dirname_f:+/${dirname_f}}"
     filename_source="$(basename ${f})"
-    dirname_target="$3/${dirname_f}"
+    dirname_target="$3${dirname_f:+/${dirname_f}}"
     filename_target="${filename_source}"
     # Get the realpath of the source and target files.
     fullpath_source="${dirname_source}/${filename_source}"
@@ -128,13 +126,12 @@ deploy_dotfiles_link() {
     *) ;;
     esac
   done
+  unset f dirname_f fullpath_source_realpath fullpath_target_realpath
   # restore original variables.
   [ "${dirname_source_original}" != "unset" ] && dirname_source="${dirname_source_original}" || unset dirname_source
   [ "${filename_source_original}" != "unset" ] && filename_source="${filename_source_original}" || unset filename_source
-  [ "${fullpath_source_original}" != "unset" ] && fullpath_source="${fullpath_source_original}" || unset fullpath_source
   [ "${dirname_target_original}" != "unset" ] && dirname_target="${dirname_target_original}" || unset dirname_target
   [ "${filename_target_original}" != "unset" ] && filename_target="${filename_target_original}" || unset filename_target
-  [ "${fullpath_target_original}" != "unset" ] && fullpath_target="${fullpath_target_original}" || unset fullpath_target
 }
 
 # parse arguments.
@@ -187,7 +184,7 @@ dir_source_base="${dirname_source:-$dirname_source_default}"
 dir_target_base="${dirname_target:-$dirname_target_default}"
 echo "Deploy dotfiles from ${dir_source_base} to ${dir_target_base}"
 if [ -d "${dir_source_base}" ]; then
-  files_source="$(cd $dir_source_base && find . -type f -print -o -type l -print | grep -Ev "(${regex_exclude_deploy}|/etc/profile\.d/)")"
+  files_source="$(cd $dir_source_base && find . -type f -print -o -type l -print | grep -Ev "(${regex_exclude_deploy}|/etc/profile\.d/)" | sed -e 's|^./||g')"
   deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
 else
   echo "Warning: Directory ${dir_source_base} does not exist."
@@ -201,7 +198,7 @@ else
   dir_target_base="${dirname_target}/usr/local/etc"
 fi
 if [ -d "${dir_source_base}" ]; then
-  files_source="$(cd $dir_source_base && find . -type f -print | grep -Ev "${regex_exclude_deploy}")"
+  files_source="$(cd $dir_source_base && find . -type f -print | grep -Ev "${regex_exclude_deploy}" | sed -e 's|^./||g')"
   deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
 else
   echo "Warning: Directory ${dir_source_base} does not exist."
