@@ -1,0 +1,72 @@
+# Shell common functions.
+
+# Check for duplicate loading
+[ "$LOADED_HOME_SH_FUNCTIONS" = "yes" ] && return
+LOADED_HOME_SH_FUNCTIONS=yes
+
+# get OSTYPE
+get_ostype() {
+  if _ostype="$(uname -o 2> /dev/null)"; then
+    :
+  elif _ostype="$(uname -s 2> /dev/null)"; then
+    :
+  else
+    _ostype="${OS:-unknown}"
+  fi
+  echo "${_ostype}"
+  unset _ostype
+}
+
+# get OSTYPE lower case
+get_ostype_lower() {
+  _ostype="${OSTYPE:-$(get_ostype)}"
+  echo "$(echo "${_ostype}" | tr [:upper:] [:lower:] 2> /dev/null)"
+  unset _ostype
+}
+
+# Shell dependent settings from $1/*.$2
+# if $2 is "", read $1/*
+read_profile_d() {
+  dir_profile_base="$1"
+  read_suffix="$2"
+  _LC_ALL_SET_="${LC_ALL+set}"
+  _LC_SAVE_="${LC_ALL-null}"
+  LC_ALL=C
+  if [ "${_LC_SAVE_}" = "null" ]; then
+    for file in $dir_profile_base/*${read_suffix:+.${read_suffix}}; do
+      [ -e "${file}" ] && . "${file}"
+    done
+    unset LC_ALL
+  else
+    for file in $dir_profile_base/*${read_suffix:+.${read_suffix}}; do
+      [ -e "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}"
+    done
+    LC_ALL="${_LC_SAVE_}"
+  fi
+  unset file _LC_ALL_SET_ _LC_SAVE_
+}
+
+# Shell dependent settings from /usr/local/etc/profile.d/*.$1
+read_usr_local_etc_profile_d() {
+  read_profile_d /usr/local/etc/profile.d $1
+}
+
+# Get shell filename without path and suffix from process id
+get_shell_filename() {
+  export OSTYPE_LOWER="${OSTYPE_LOWER:-$(echo ${MSYSTEM:-${OSTYPE}} | tr [:upper:] [:lower:] 2> /dev/null)}"
+  case "${OSTYPE_LOWER}" in
+    cygwin|cygwin_nt*|msys|mingw*)
+      SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')") ;;
+    linux*|gnu/linux*)
+      SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $4}')") ;;
+    *)
+      unset SHELLFILENAME ;;
+  esac
+  if [ "${SHELLFILENAME}" ]; then
+    echo ${SHELLFILENAME}
+    return 0
+  else
+    echo ""
+    return 1
+  fi
+}
