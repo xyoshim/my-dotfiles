@@ -27,7 +27,7 @@ done
 
 for file in $(git ls-files); do
   timestamp=$(git log -1 --date=format-local:"%Y%m%d%H%M.%S" --pretty=format:"%${dateformat}" "${file}")
-  if [ "${dry_run}" == "no" ]; then
+  if [ "${dry_run}" = "no" ]; then
     echo touch -t "${timestamp}" "${file}"
     touch -t "${timestamp}" "${file}"
   else
