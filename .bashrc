@@ -36,12 +36,30 @@ elif [ -f /etc/bash.bashrc ]; then
   . /etc/bash.bashrc
 fi
 
-# Load shell common functions
-if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions" ]; then
-  . "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions"
-elif [ -f "${HOME}/.sh_functions" ]; then
-  . "${HOME}/.sh_functions"
-fi
+# Functions
+#
+# Some people use a different file for functions
+## Load bash functions
+for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}" "${XDG_CONFIG_HOME-${HOME}/.config/bash}" "${HOME}"; do
+  if [ "${d}" ] && [ -f "${d}/.bash_functions" ]; then
+    . "${d}/.bash_functions"
+    break
+  fi
+done
+## Load shell common functions
+for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/sh}" "${XDG_CONFIG_HOME-${HOME}/.config/sh}" "${HOME}"; do
+  if [ "${d}" ] && [ -f "${d}/.sh_functions" ]; then
+    . "${d}/.sh_functions"
+    break
+  fi
+done
+## User specific aliases and functions
+for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash/bashrc.d}" "${HOME}/.config/bash/bashrc.d" "${HOME}/.bashrc.d"; do
+  if [ "${d}" ] && [ -d ${d} ]; then
+    read_profile_d "${d}" ""
+  fi
+done
+unset d
 
 # set history file
 if shopt -oq posix; then
@@ -62,13 +80,13 @@ else
   PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 fi
 unset _have__git_ps1
-if __git_ps1 > /dev/null 2>&1; then
+if type __git_ps1 > /dev/null 2>&1; then
   _have__git_ps1=yes
 else
   if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh" ]; then
     . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-prompt.sh"
   fi
-  if __git_ps1 > /dev/null 2>&1; then
+  if type __git_ps1 > /dev/null 2>&1; then
     _have__git_ps1=yes
   fi
 fi
@@ -214,25 +232,3 @@ done
 # umask 027
 # Paranoid: neither group nor others have any perms:
 # umask 077
-
-# Functions
-#
-# Some people use a different file for functions
-for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}" "${HOME}"; do
-  if [ -f "${d}/.bash_functions" ]; then
-    . "${d}/.bash_functions"
-  fi
-done
-
-# User specific aliases and functions
-for d in ${HOME} ${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}; do
-  if [ -d ${d}/.bashrc.d ]; then
-    for rc in ${d}/.bashrc.d/*; do
-      if [ -f "$rc" ]; then
-        . "$rc"
-      fi
-    done
-  fi
-done
-unset rc
-unset d
