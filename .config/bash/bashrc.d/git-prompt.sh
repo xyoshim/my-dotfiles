@@ -1,0 +1,1 @@
+../../git/git-prompt.sh
