@@ -29,21 +29,22 @@ get_ostype_lower() {
 read_profile_d() {
   dir_profile_base="$1"
   read_suffix="$2"
+  [ -z "$read_suffix" ] && unset read_suffix
   _LC_ALL_SET_="${LC_ALL+set}"
   _LC_SAVE_="${LC_ALL-null}"
   LC_ALL=C
   if [ "${_LC_SAVE_}" = "null" ]; then
-    for file in $dir_profile_base/*${read_suffix:+.${read_suffix}}; do
-      [ -e "${file}" ] && . "${file}"
+    for file in $dir_profile_base/*${read_suffix+'.'${read_suffix}}; do
+      [ -f "${file}" ] && . "${file}"
     done
     unset LC_ALL
   else
-    for file in $dir_profile_base/*${read_suffix:+.${read_suffix}}; do
-      [ -e "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}"
+    for file in $dir_profile_base/*${read_suffix+'.'${read_suffix}}; do
+      [ -f "${file}" ] && LC_ALL="${_LC_SAVE_}" . "${file}"
     done
     LC_ALL="${_LC_SAVE_}"
   fi
-  unset file _LC_ALL_SET_ _LC_SAVE_
+  unset file read_suffix _LC_ALL_SET_ _LC_SAVE_
 }
 
 # Shell dependent settings from /usr/local/etc/profile.d/*.$1
@@ -53,9 +54,9 @@ read_usr_local_etc_profile_d() {
 
 # Get shell filename without path and suffix from process id
 get_shell_filename() {
-  export OSTYPE_LOWER="${OSTYPE_LOWER:-$(echo ${MSYSTEM:-${OSTYPE}} | tr [:upper:] [:lower:] 2> /dev/null)}"
+  export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
   case "${OSTYPE_LOWER}" in
-    cygwin|cygwin_nt*|msys|mingw*)
+    cygwin*|msys*|mingw*)
       SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')") ;;
     linux*|gnu/linux*)
       SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $4}')") ;;
