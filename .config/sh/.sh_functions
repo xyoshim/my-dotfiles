@@ -57,17 +57,13 @@ get_shell_filename() {
   export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
   case "${OSTYPE_LOWER}" in
     cygwin*|msys*|mingw*)
-      SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')") ;;
+      _shell_filename=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $8}')")
+      ;;
     linux*|gnu/linux*)
-      SHELLFILENAME=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $4}')") ;;
-    *)
-      unset SHELLFILENAME ;;
+      _shell_filename=$(basename "$(ps -p $$ | tail -n 1 | awk '{print $4}')")
+      ;;
+    *) ;;
   esac
-  if [ "${SHELLFILENAME}" ]; then
-    echo ${SHELLFILENAME}
-    return 0
-  else
-    echo ""
-    return 1
-  fi
+  echo ${_shell_filename}
+  unset _shell_filename
 }
