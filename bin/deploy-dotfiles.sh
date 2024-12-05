@@ -21,7 +21,7 @@ usage() {
 dry_run=no
 unset dirname_target dirname_source
 dirname_target_default="$HOME"
-dirname_source_default="$HOME/dotfiles.alma9"
+dirname_source_default="$HOME/dotfiles.ubuntu"
 suffix_backup=".bak"
 regex_exclude_deploy='(/(\.jj|\.git|\.vscode)/|(\.bak|\.orig|\.rej|\.*history|\.lesshst|\.viminfo|\.gitattributes|\.gitignore|\.editorconfig|/~.*|\.~.*|0)(/|$))'
 
