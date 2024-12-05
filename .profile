@@ -83,95 +83,6 @@ export MANPATH="$(echo :"${MANPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/se
 export INFOPATH="$(echo :"${INFOPATH}": | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
 unset TMP_PATH TMP_PREFIX_PATH TMP_SUFFIX_PATH PREFIXS
 
-# Set XDG Base Directories
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
-
-# Load shell common functions
-if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions" ]; then
-  . "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions"
-elif [ -f "${HOME}/.sh_functions" ]; then
-  . "${HOME}/.sh_functions"
-fi
-
-# set OSTYPE, when unset
-export OSTYPE="${OSTYPE:-$(get_ostype)}"
-export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
-
-# if running bash
-if [ -n "${BASH_VERSION}" ]; then
-  if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/.bashrc" ]; then
-    source "${HOME}/.bashrc"
-  elif [ -f "${HOME}/.bashrc" ]; then
-    source "${HOME}/.bashrc"
-  fi
-fi
-
-# default editor and pager
-if [ ! "x${TERM}" = "x" ]; then
-  [ -x "/usr/bin/vim" ] && export EDITOR=${EDITOR:-/usr/bin/vim}
-  [ -x "/usr/bin/less" ] && export PAGER=${PAGER:-/usr/bin/less}
-fi
-
-# if CYGWIN or MSYS, use Windows symbolic link
-case "${OSTYPE_LOWER}" in
-  cygwin*)
-    export CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native"
-    export EXEEXT=".exe"
-    ;;
-  msys*|mingw*)
-    export MSYS="${MSYS}${MSYS+ }winsymlinks:native"
-    export EXEEXT=".exe"
-    ;;
-  *)
-    ;;
-esac
-
-read_usr_local_etc_profile_d sh
-[ "${XDG_STATE_HOME}" ] && [ ! -d "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
-
-# Get shell filename
-if SHELLFILENAME=$(get_shell_filename); then
-  export SHELLFILENAME
-else
-  export -n SHELLFILENAME
-  unset SHELLFILENAME
-fi
-
-if [ "${BASH_VERSION}" ]; then
-  read_usr_local_etc_profile_d bash
-  case ":${SHELLOPTS}:_${POSIXLY_CORRECT+POSIXLY_CORRECT}_${SHELLFILENAME}" in
-    *":posix:"* | *"_POSIXLY_CORRECT_"* | *"_sh")
-      HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
-      HISTFILE="${HISTFILE:-${HOME}/.sh_history}"
-      ;;
-    *)
-      ;;
-  esac
-  PARENT_HISTFILE="$(dirname $HISTFILE)"
-  [ -d "${PARENT_HISTFILE}" ] || mkdir -p "${PARENT_HISTFILE}"
-  unset PARENT_HISTFILE
-elif [ "${KSH_VERSION}" ]; then
-  read_usr_local_etc_profile_d ksh
-  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
-  HISTFILE="${HISTFILE:-${HOME}/.ksh_history}"
-elif [ "${ZSH_VERSION}" ]; then
-  # zsh is in shell compatibility mode here, so we probably shouldn't do this
-  read_usr_local_etc_profile_d zsh
-  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/zsh_history}"
-  HISTFILE="${HISTFILE:-${HOME}/.zsh_history}"
-else
-  PS1="$ "
-  PS2='> '
-  PS4='+ '
-fi
-
-# history file of less
-LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
-LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
-
 # path of dotnet
 ## Check existing variable "DOTNET_ROOT"
 if [ ! "${DOTNET_ROOT}" ] || [ ! -x "${DOTNET_ROOT}/dotnet" ]; then
@@ -202,3 +113,96 @@ if [ -n "$DOTNET_TOOLS_PATH" ]; then
   esac
   export PATH="${DOTNET_TOOLS_PATH}:${PATH}"
 fi
+
+# Load shell common functions
+if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions" ]; then
+  . "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions"
+elif [ -f "${HOME}/.sh_functions" ]; then
+  . "${HOME}/.sh_functions"
+fi
+
+# set OSTYPE, when unset
+export OSTYPE="${OSTYPE:-$(get_ostype)}"
+export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
+
+# if CYGWIN or MSYS, use Windows symbolic link
+case "${OSTYPE_LOWER}" in
+  cygwin*)
+    export CYGWIN="${CYGWIN}${CYGWIN+ }winsymlinks:native"
+    export EXEEXT=".exe"
+    ;;
+  msys*|mingw*)
+    export MSYS="${MSYS}${MSYS+ }winsymlinks:native"
+    export EXEEXT=".exe"
+    ;;
+  *)
+    ;;
+esac
+
+# Set XDG Base Directories
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
+
+# If not running interactively, return here.
+case "$-" in
+  *i*) ;;
+  *) return ;;
+esac
+
+# Get shell filename
+SHELLFILENAME="$(get_shell_filename)"
+
+# if running bash
+if [ -n "${BASH_VERSION}" ]; then
+  if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/.bashrc" ]; then
+    source "${HOME}/.bashrc"
+  elif [ -f "${HOME}/.bashrc" ]; then
+    source "${HOME}/.bashrc"
+  fi
+fi
+
+read_usr_local_etc_profile_d sh
+[ "${XDG_STATE_HOME}" ] && [ ! -d "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
+
+# default editor and pager
+if [ ! "x${TERM}" = "x" ]; then
+  [ -x "/usr/bin/vim" ] && export EDITOR=${EDITOR:-/usr/bin/vim}
+  [ -x "/usr/bin/less" ] && export PAGER=${PAGER:-/usr/bin/less}
+fi
+
+if [ "${BASH_VERSION}" ]; then
+  read_usr_local_etc_profile_d bash
+  case ":${SHELLOPTS}:_${POSIXLY_CORRECT+POSIXLY_CORRECT}_${SHELLFILENAME}" in
+    *":posix:"* | *"_POSIXLY_CORRECT_"* | *"_sh")
+      HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/sh_history}"
+      HISTFILE="${HISTFILE:-${HOME}/.sh_history}"
+      ;;
+    *"_bash")
+      HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/bash_history}"
+      HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
+      ;;
+    *) ;;
+  esac
+  PARENT_HISTFILE="$(dirname $HISTFILE 2> /dev/null)" || PARENT_HISTFILE="${HOME}"
+  [ -d "${PARENT_HISTFILE}" ] || mkdir -p "${PARENT_HISTFILE}"
+  unset PARENT_HISTFILE
+elif [ "${KSH_VERSION}" ]; then
+  read_usr_local_etc_profile_d ksh
+  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/ksh_history}"
+  HISTFILE="${HISTFILE:-${HOME}/.ksh_history}"
+elif [ "${ZSH_VERSION}" ]; then
+  # zsh is in shell compatibility mode here, so we probably shouldn't do this
+  read_usr_local_etc_profile_d zsh
+  HISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/zsh_history}"
+  HISTFILE="${HISTFILE:-${HOME}/.zsh_history}"
+else
+  PS1="$ "
+  PS2='> '
+  PS4='+ '
+fi
+
+# history file of less
+LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
+LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
