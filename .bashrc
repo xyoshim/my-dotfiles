@@ -70,15 +70,61 @@ else
   HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
 fi
 
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+   xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+# set prompt
 export -n PS1
 unset PS1
 export OSTYPE="${OSTYPE:-$(get_ostype)}"
 export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
-if [ "${MSYSTEM:-${OSTYPE}}" ]; then
-  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]${MSYSTEM:-${OSTYPE}} \[\e[33m\]\w\[\e[0m\]\n\$ '
+
+# Setup safe prompts
+if [ "$color_prompt" = yes ]; then
+  if [ "${MSYSTEM:-${OSTYPE}}" ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\033[35m\]${MSYSTEM:-${OSTYPE}} \[\e[33m\]\w\[\e[0m\]\n\$ '
+  else
+    PS1='${debian_chroot:+($debian_chroot)}\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+  fi
 else
-  PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+  if [ "${MSYSTEM:-${OSTYPE}}" ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h ${MSYSTEM:-${OSTYPE}} \w\n\$ '
+  else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h \w\n\$ '
+  fi
 fi
+
+# Setup prompt for git
 unset _have__git_ps1
 if type __git_ps1 > /dev/null 2>&1; then
   _have__git_ps1=yes
@@ -93,15 +139,28 @@ fi
 if [ "${_have__git_ps1}" = "yes" ]; then
   case "${OSTYPE_LOWER}" in
     msys*|mingw*)
-      PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
-      PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \[\033[33m\]\w\[\033[36m\]'
-      PS1="${PS1}"'`__git_ps1`'
-      PS1="${PS1}"'\[\033[0m\]\n$ '
+      if [ "$color_prompt" = yes ]; then
+        PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
+        PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \[\033[33m\]\w\[\033[36m\]'
+        PS1="${PS1}"'`__git_ps1`'
+        PS1="${PS1}"'\[\033[0m\]\n$ '
+      else
+        PS1='$TITLEPREFIX:$PWD \u@\h '
+        PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \w'
+        PS1="${PS1}"'`__git_ps1`'
+        PS1="${PS1}"'\n$ '
+      fi
       ;;
     *)
-      PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h '
-      [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"'\[\033[35m\]${MSYSTEM:-${OSTYPE}} '
-      PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+      if [ "$color_prompt" = yes ]; then
+        PS1='${debian_chroot:+($debian_chroot)}\[\e]0;\w\a\]\[\e[32m\]\u@\h'
+        [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"' \[\033[35m\]${MSYSTEM:-${OSTYPE}} '
+        PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
+      else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h'
+        [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"' ${MSYSTEM:-${OSTYPE}} '
+        PS1="${PS1}"'\w$(__git_ps1)\n\$ '
+      fi
     ;;
   esac
   GIT_PS1_SHOWDIRTYSTATE=true
@@ -110,10 +169,12 @@ if [ "${_have__git_ps1}" = "yes" ]; then
   GIT_PS1_SHOWUPSTREAM=auto
   GIT_PS1_SHOWCONFLICTSTATE=yes
   GIT_PS1_SHOWCOLORHINTS=""
-  if ! type ___git_complete > /dev/null 2>&1 ; then
-    if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-completion.bash" ]; then
-      . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-completion.bash"
-    fi
+fi
+
+# git completion
+if ! type ___git_complete > /dev/null 2>&1 ; then
+  if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-completion.bash" ]; then
+    . "${XDG_CONFIG_HOME:-${HOME}/.config}/git/git-completion.bash"
   fi
 fi
 
