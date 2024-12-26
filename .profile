@@ -154,16 +154,13 @@ esac
 # Get shell filename
 SHELLFILENAME="$(get_shell_filename)"
 
-# if running bash
-if [ -n "${BASH_VERSION}" ]; then
-  if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/.bashrc" ]; then
-    source "${HOME}/.bashrc"
-  elif [ -f "${HOME}/.bashrc" ]; then
-    source "${HOME}/.bashrc"
-  fi
-fi
+# # if running bash
+# if [ -n "${BASH_VERSION}" ] && [ -f "${HOME}/.bashrc" ]; then
+#   source "${HOME}/.bashrc"
+# fi
 
 read_usr_local_etc_profile_d sh
+[ "${XDG_CACHE_HOME}" ] && [ ! -d "${XDG_CACHE_HOME}" ] && mkdir -p "${XDG_CACHE_HOME}"
 [ "${XDG_STATE_HOME}" ] && [ ! -d "${XDG_STATE_HOME}" ] && mkdir -p "${XDG_STATE_HOME}"
 
 # default editor and pager
