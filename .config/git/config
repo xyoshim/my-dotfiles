@@ -30,3 +30,5 @@
 	ui = auto
 [rerere]
 	enabled = true
+[credential "https://github.com"]
+	helper = "C:/Program Files/GitHub CLI/gh.exe" auth git-credential
