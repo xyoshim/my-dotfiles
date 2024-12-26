@@ -26,6 +26,9 @@
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
+# # Already loaded
+# [ "${LOADED_HOME_BASHRC}" != "yes" ] && LOADED_HOME_BASHRC=yes
+
 # Not bash
 [ -z "${BASH_VERSION}" ] && return
 
@@ -54,12 +57,16 @@ for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/sh}" "${XDG_CONFIG_HOME-${HOME}/.
   fi
 done
 ## User specific aliases and functions
-for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash/bashrc.d}" "${HOME}/.config/bash/bashrc.d" "${HOME}/.bashrc.d"; do
+dir_loop="${HOME}/.config/bash/bashrc.d ${HOME}/.bashrc.d"
+if [ "${XDG_CONFIG_HOME}" != "${HOME}/.config" ]; then
+  dir_loop="${XDG_CONFIG_HOME}/bash/bashrc.d ${dir_loop}"
+fi
+for d in ${dir_loop}; do
   if [ "${d}" ] && [ -d ${d} ]; then
     read_profile_d "${d}" ""
   fi
 done
-unset d
+unset d dir_loop
 
 # set history file
 if shopt -oq posix; then
