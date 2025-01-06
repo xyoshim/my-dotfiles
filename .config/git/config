@@ -31,4 +31,8 @@
 [rerere]
 	enabled = true
 [credential "https://github.com"]
-	helper = "C:/Program Files/GitHub CLI/gh.exe" auth git-credential
+	helper =
+	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
