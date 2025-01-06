@@ -20,7 +20,7 @@ ui.merge-editor = "vscode"
 # ui.merge-editor = "vimdiff"
 # ui.merge-editor = "kdiff3"
 
-[alias]
+[aliases]
 bmh=["bookmark", "move", "--to", "@-", "--from"]
 bsh=["bmh"]
 alog=["log", "-r", "..@"]
