@@ -38,3 +38,6 @@ indent_size = 2
 [.mksh*]
 indent_style = tab
 indent_size = 4
+
+[*.{bat,cmd}]
+newline_style = crlf
