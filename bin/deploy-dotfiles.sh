@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # deploy dotfiles
 
@@ -14,6 +15,7 @@ usage() {
   echo '                                     use ".bak".'
   echo '--dry-run | -n               ... Do not actually change any files,'
   echo '                                 just print what would happen.'
+  echo '--verbose | -v               ... Print verbose messages,'
   echo '--help | -h                  ... Print this message.'
 }
 
@@ -37,8 +39,12 @@ exit_with_error() {
 #   $1 : file name
 #   $2 : suffix for backup file name
 backup_file_with_suffix() {
-  mv "$1" "$1$2"
-  return $?
+  if mv "$1" "$1$2"; then
+    echo "  Rename : $1 -> $2$3"
+  else
+    exit_with_error $? "Error: Failed to rename $1 -> $2$3"
+  fi
+  return 0
 }
 
 # create directory if not exists.
@@ -47,8 +53,22 @@ mkdir_if_not_exists() {
   if [ -d "$1" ]; then
     return 0
   else
-    mkdir -p "$1"
-    return $?
+    if mkdir -p "$1"; then
+      return $?
+    else
+      exit_with_error $? "Error: Failed to create directory $1"
+    fi
+  fi
+}
+
+# create symlink for deploy.
+#   $1 : link source filename
+#   $2 : link target filename
+create_symlink_for_deploy() {
+  if ln -s "$1" "$2"; then
+    echo "  Link : $1 -> $2"
+  else
+    exit_with_error $? "Error: Failed to create symlink for $1 -> $2"
   fi
 }
 
@@ -62,6 +82,7 @@ deploy_dotfiles_link() {
   filename_source_original="${filename_source-unset}"
   dirname_target_original="${dirname_target-unset}"
   filename_target_original="${filename_target-unset}"
+  # create symlink for each file.
   for f in $2; do
     # Get the filename and directory name.
     [ "$(dirname ${f})" = "." ] && dirname_f="" || dirname_f="$(dirname ${f})"
@@ -82,15 +103,11 @@ deploy_dotfiles_link() {
     case "${dry_run}-${already_deployed}-${exist_target}" in
     "no-no-yes")
       ## backup original target file, when not symlink to source file.
-      if backup_file_with_suffix "${fullpath_target}" "${suffix_backup}"; then
-        echo "Rename : ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
-      else
-        exit_with_error $? "Error: Failed to rename ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
-      fi
+      backup_file_with_suffix "${fullpath_target}" "${suffix_backup}"
       ;;
     "yes-no-yes")
       ## show message 'Would rename', when dry-run.
-      echo "Would rename : ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
+      echo "  Would rename : ${fullpath_target} -> ${fullpath_target}${suffix_backup}"
       ;;
     *) ;;
     esac
@@ -99,29 +116,21 @@ deploy_dotfiles_link() {
     ## do deploy, when not dry-run and not already-deployed.
     "no-no")
       ### Create the directory for symlink, if it does not exist.
-      if mkdir_if_not_exists "$(dirname "${fullpath_target}")"; then
-        :
-      else
-        exit_with_error $? "Error: Failed to create directory ${dirname_target_parent}."
-      fi
+      mkdir_if_not_exists "$(dirname "${fullpath_target}")"
       ### Create a symlink.
-      if ln -s "${fullpath_source}" "${fullpath_target}"; then
-        echo "Link : ${fullpath_source} -> ${fullpath_target}"
-      else
-        exit_with_error $? "Error: Failed to create symlink for ${fullpath_source} -> ${fullpath_target}"
-      fi
+      create_symlink_for_deploy "${fullpath_source}" "${fullpath_target}"
       ;;
     ## show message 'Already-deployed', when not dry-run and already-deployed.
     "no-yes")
-      echo "Already deployed : ${fullpath_source} -> ${fullpath_target}"
+      [ "${message_verbose}" = "yes" ] && echo "  Already deployed : ${fullpath_source} -> ${fullpath_target}"
       ;;
     ## show message 'Would link', when dry-run and not already-deployed.
     "yes-no")
-      echo "Would link : ${fullpath_source} -> ${fullpath_target}"
+      echo "  Would link : ${fullpath_source} -> ${fullpath_target}"
       ;;
     ## show message 'Would skip', when dry-run and already-deployed.
     "yes-yes")
-      echo "Would skip : ${fullpath_source} -> ${fullpath_target}"
+      [ "${message_verbose}" = "yes" ] && echo "  Would skip : ${fullpath_source} -> ${fullpath_target}"
       ;;
     *) ;;
     esac
@@ -166,6 +175,9 @@ while [ $# != 0 ]; do
   --sourcedir=*)
     dirname_source="$(echo ${option} | sed 's|--sourcedir=||')"
     ;;
+  -v | --verbose)
+    message_verbose=yes
+    ;;
   --)
     break
     ;;
@@ -182,9 +194,9 @@ done
 # Home directory
 dir_source_base="${dirname_source:-$dirname_source_default}"
 dir_target_base="${dirname_target:-$dirname_target_default}"
-echo "Deploy dotfiles from ${dir_source_base} to ${dir_target_base}"
 if [ -d "${dir_source_base}" ]; then
   files_source="$(cd $dir_source_base && find . -type f -print -o -type l -print | grep -Ev "(${regex_exclude_deploy}|/etc/profile\.d/)" | sed -e 's|^./||g')"
+  echo "Deploy dotfiles from ${dir_source_base} to ${dir_target_base}"
   deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
 else
   echo "Warning: Directory ${dir_source_base} does not exist."
@@ -199,6 +211,7 @@ else
 fi
 if [ -d "${dir_source_base}" ]; then
   files_source="$(cd $dir_source_base && find . -type f -print | grep -Ev "${regex_exclude_deploy}" | sed -e 's|^./||g')"
+  echo "Deploy dotfiles from ${dir_source_base} to ${dir_target_base}"
   deploy_dotfiles_link "${dir_source_base}" "${files_source}" "${dir_target_base}"
 else
   echo "Warning: Directory ${dir_source_base} does not exist."
