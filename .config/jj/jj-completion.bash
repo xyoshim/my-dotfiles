@@ -27,12 +27,6 @@ _jj() {
             jj,branch)
                 cmd="jj__branch"
                 ;;
-            jj,cat)
-                cmd="jj__cat"
-                ;;
-            jj,chmod)
-                cmd="jj__chmod"
-                ;;
             jj,commit)
                 cmd="jj__commit"
                 ;;
@@ -68,9 +62,6 @@ _jj() {
                 ;;
             jj,file)
                 cmd="jj__file"
-                ;;
-            jj,files)
-                cmd="jj__files"
                 ;;
             jj,fix)
                 cmd="jj__fix"
@@ -465,8 +456,8 @@ _jj() {
             jj__util,gc)
                 cmd="jj__util__gc"
                 ;;
-            jj__util,mangen)
-                cmd="jj__util__mangen"
+            jj__util,install-man-pages)
+                cmd="jj__util__install__man__pages"
                 ;;
             jj__util,markdown-help)
                 cmd="jj__util__markdown__help"
@@ -496,7 +487,7 @@ _jj() {
 
     case "${cmd}" in
         jj)
-            opts="-R -h -V --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help --version abandon absorb backout bookmark branch cat chmod commit config debug describe desc diff diffedit duplicate edit evolog evolution-log file files fix git help init interdiff log new next operation op parallelize prev rebase resolve restore revert root run show simplify-parents sparse split squash status st tag util undo unsquash untrack version workspace"
+            opts="-R -h -V --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help --version abandon absorb backout bookmark branch commit config debug describe desc diff diffedit duplicate edit evolog evolution-log file fix git help init interdiff log new next operation op parallelize prev rebase resolve restore revert root run show simplify-parents sparse split squash status st tag util undo unsquash untrack version workspace"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -525,7 +516,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -559,7 +550,7 @@ _jj() {
             return 0
             ;;
         jj__abandon)
-            opts="-r -s -R -h --summary --restore-descendants --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [REVSETS]..."
+            opts="-r -s -R -h --summary --retain-bookmarks --restore-descendants --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [REVSETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -592,7 +583,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -675,7 +666,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -754,7 +745,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -817,7 +808,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -892,7 +883,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -955,7 +946,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1018,7 +1009,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1101,7 +1092,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1172,7 +1163,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1235,7 +1226,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1310,7 +1301,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1373,7 +1364,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1436,7 +1427,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1499,7 +1490,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1574,7 +1565,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1637,7 +1628,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1700,7 +1691,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1783,7 +1774,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1854,7 +1845,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1917,7 +1908,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1992,7 +1983,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2055,7 +2046,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2118,149 +2109,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-toml)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-file)
-                    local oldifs
-                    if [ -n "${IFS+x}" ]; then
-                        oldifs="$IFS"
-                    fi
-                    IFS=$'\n'
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    if [ -n "${oldifs+x}" ]; then
-                        IFS="$oldifs"
-                    fi
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o filenames
-                    fi
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        jj__cat)
-            opts="-r -R -h --revision --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <FILESETS>..."
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --revision)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -r)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --repository)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                -R)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                --at-operation)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --at-op)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-toml)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-file)
-                    local oldifs
-                    if [ -n "${IFS+x}" ]; then
-                        oldifs="$IFS"
-                    fi
-                    IFS=$'\n'
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    if [ -n "${oldifs+x}" ]; then
-                        IFS="$oldifs"
-                    fi
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o filenames
-                    fi
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        jj__chmod)
-            opts="-r -R -h --revision --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help n x <FILESETS>..."
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --revision)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -r)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --repository)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                -R)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                --at-operation)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --at-op)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2339,7 +2188,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2402,7 +2251,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2465,7 +2314,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2528,7 +2377,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2599,7 +2448,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2662,7 +2511,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2725,7 +2574,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2788,7 +2637,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2851,7 +2700,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2914,7 +2763,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -2977,7 +2826,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3040,7 +2889,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3103,7 +2952,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3170,7 +3019,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3233,7 +3082,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3296,7 +3145,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3359,7 +3208,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3422,7 +3271,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3501,7 +3350,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3564,7 +3413,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3627,7 +3476,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3690,7 +3539,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3753,7 +3602,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3816,7 +3665,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3879,7 +3728,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -3913,7 +3762,7 @@ _jj() {
             return 0
             ;;
         jj__describe)
-            opts="-r -m -R -h --message --stdin --no-edit --reset-author --author --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [REVSETS]..."
+            opts="-r -m -R -h --message --stdin --no-edit --edit --reset-author --author --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [REVSETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -3958,7 +3807,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4053,7 +3902,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4144,7 +3993,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4243,7 +4092,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4306,7 +4155,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4340,7 +4189,7 @@ _jj() {
             return 0
             ;;
         jj__evolog)
-            opts="-r -n -l -T -p -s -R -h --revision --limit --no-graph --template --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+            opts="-r -n -T -p -s -R -h --revision --limit --reversed --no-graph --template --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -4359,10 +4208,6 @@ _jj() {
                     return 0
                     ;;
                 -n)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -l)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -4405,7 +4250,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4468,7 +4313,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4539,7 +4384,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4610,7 +4455,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4644,7 +4489,7 @@ _jj() {
             return 0
             ;;
         jj__file__list)
-            opts="-r -R -h --revision --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
+            opts="-r -T -R -h --revision --template --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -4655,6 +4500,14 @@ _jj() {
                     return 0
                     ;;
                 -r)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --template)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -T)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -4681,7 +4534,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4752,7 +4605,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4815,7 +4668,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -4878,78 +4731,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-toml)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-file)
-                    local oldifs
-                    if [ -n "${IFS+x}" ]; then
-                        oldifs="$IFS"
-                    fi
-                    IFS=$'\n'
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    if [ -n "${oldifs+x}" ]; then
-                        IFS="$oldifs"
-                    fi
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o filenames
-                    fi
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        jj__files)
-            opts="-r -R -h --revision --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --revision)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -r)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --repository)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                -R)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                --at-operation)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --at-op)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5020,7 +4802,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5083,7 +4865,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5154,7 +4936,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5217,7 +4999,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5292,7 +5074,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5355,7 +5137,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5425,7 +5207,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5516,7 +5298,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5579,7 +5361,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5642,7 +5424,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5705,7 +5487,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5768,7 +5550,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5831,7 +5613,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5894,7 +5676,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -5957,7 +5739,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6028,7 +5810,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6099,7 +5881,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6133,19 +5915,12 @@ _jj() {
             return 0
             ;;
         jj__init)
-            opts="-R -h --git --git-repo --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [DESTINATION]"
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [DESTINATION]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --git-repo)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
                 --repository)
                     COMPREPLY=()
                     if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
@@ -6169,7 +5944,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6256,7 +6031,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6290,7 +6065,7 @@ _jj() {
             return 0
             ;;
         jj__log)
-            opts="-r -n -l -T -p -s -R -h --revisions --reversed --limit --no-graph --template --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
+            opts="-r -n -T -p -s -R -h --revisions --limit --reversed --no-graph --template --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -6309,10 +6084,6 @@ _jj() {
                     return 0
                     ;;
                 -n)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -l)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -6355,7 +6126,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6450,7 +6221,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6513,7 +6284,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6576,7 +6347,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6639,7 +6410,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6734,7 +6505,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6768,7 +6539,7 @@ _jj() {
             return 0
             ;;
         jj__operation__log)
-            opts="-n -l -T -p -s -R -h --limit --no-graph --template --op-diff --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+            opts="-n -T -p -s -R -h --limit --reversed --no-graph --template --op-diff --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -6779,10 +6550,6 @@ _jj() {
                     return 0
                     ;;
                 -n)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -l)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -6825,7 +6592,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6892,7 +6659,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -6963,7 +6730,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7030,7 +6797,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7093,7 +6860,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7156,7 +6923,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7275,7 +7042,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7350,7 +7117,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7384,7 +7151,7 @@ _jj() {
             return 0
             ;;
         jj__restore)
-            opts="-f -t -c -r -R -h --from --to --changes-in --revision --restore-descendants --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
+            opts="-f -t -c -r -i -R -h --from --to --into --changes-in --revision --interactive --tool --restore-descendants --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -7395,6 +7162,10 @@ _jj() {
                     return 0
                     ;;
                 -f)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --into)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -7422,6 +7193,10 @@ _jj() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --tool)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --repository)
                     COMPREPLY=()
                     if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
@@ -7445,7 +7220,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7508,7 +7283,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7571,7 +7346,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7650,7 +7425,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7729,7 +7504,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7808,7 +7583,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7871,7 +7646,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7934,7 +7709,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -7997,7 +7772,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8060,7 +7835,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8131,7 +7906,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8206,7 +7981,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8309,7 +8084,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8372,7 +8147,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8435,7 +8210,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8506,7 +8281,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8573,7 +8348,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8648,7 +8423,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8711,7 +8486,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8745,7 +8520,7 @@ _jj() {
             return 0
             ;;
         jj__util)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help completion config-schema exec gc mangen markdown-help"
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help completion config-schema exec gc install-man-pages markdown-help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -8774,7 +8549,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8837,7 +8612,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8900,7 +8675,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -8963,7 +8738,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9030,7 +8805,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9063,8 +8838,8 @@ _jj() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        jj__util__mangen)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+        jj__util__install__man__pages)
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <PATH>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -9093,7 +8868,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9156,7 +8931,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9219,7 +8994,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9282,7 +9057,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9361,7 +9136,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9424,7 +9199,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9487,7 +9262,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9550,7 +9325,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9613,7 +9388,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -9676,7 +9451,7 @@ _jj() {
                     return 0
                     ;;
                 --color)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
                     return 0
                     ;;
                 --config)
