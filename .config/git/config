@@ -16,6 +16,7 @@
 	changelog = log --pretty='format:%C(auto)%as  %an <%ae>%n  * %s%n' --date=local
 	chp = cherry-pick
 	dlg = log --date=local --graph
+	dlig = log --date=local --date=iso8601 --graph
 	cfp = cat-file -p
 	sha1-short7 = rev-parse --short=7
 	sha1-short7-head = rev-parse --short=7 HEAD
@@ -24,8 +25,8 @@
 [rerere]
 	enabled = true
 [credential "https://github.com"]
-	helper = 
+	helper =
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
+	helper =
 	helper = !/usr/bin/gh auth git-credential
