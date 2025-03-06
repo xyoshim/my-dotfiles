@@ -72,9 +72,6 @@ _jj() {
             jj,help)
                 cmd="jj__help"
                 ;;
-            jj,init)
-                cmd="jj__init"
-                ;;
             jj,interdiff)
                 cmd="jj__interdiff"
                 ;;
@@ -108,9 +105,6 @@ _jj() {
             jj,restore)
                 cmd="jj__restore"
                 ;;
-            jj,revert)
-                cmd="jj__revert"
-                ;;
             jj,root)
                 cmd="jj__root"
                 ;;
@@ -119,6 +113,9 @@ _jj() {
                 ;;
             jj,show)
                 cmd="jj__show"
+                ;;
+            jj,sign)
+                cmd="jj__sign"
                 ;;
             jj,simplify-parents)
                 cmd="jj__simplify__parents"
@@ -143,6 +140,9 @@ _jj() {
                 ;;
             jj,undo)
                 cmd="jj__undo"
+                ;;
+            jj,unsign)
+                cmd="jj__unsign"
                 ;;
             jj,unsquash)
                 cmd="jj__unsquash"
@@ -305,6 +305,9 @@ _jj() {
                 ;;
             jj__debug,index)
                 cmd="jj__debug__index"
+                ;;
+            jj__debug,init-local)
+                cmd="jj__debug__init__local"
                 ;;
             jj__debug,local-working-copy)
                 cmd="jj__debug__local__working__copy"
@@ -487,7 +490,7 @@ _jj() {
 
     case "${cmd}" in
         jj)
-            opts="-R -h -V --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help --version abandon absorb backout bookmark branch commit config debug describe desc diff diffedit duplicate edit evolog evolution-log file fix git help init interdiff log new next operation op parallelize prev rebase resolve restore revert root run show simplify-parents sparse split squash status st tag util undo unsquash untrack version workspace"
+            opts="-R -h -V --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help --version abandon absorb backout bookmark branch commit config debug describe desc diff diffedit duplicate edit evolog evolution-log file fix git help interdiff log new next operation op parallelize prev rebase resolve restore root run show sign simplify-parents sparse split squash status st tag util undo unsign unsquash untrack version workspace"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -980,7 +983,7 @@ _jj() {
             return 0
             ;;
         jj__bookmark__forget)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <NAMES>..."
+            opts="-R -h --include-remotes --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <NAMES>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1662,7 +1665,7 @@ _jj() {
             return 0
             ;;
         jj__branch__forget)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <NAMES>..."
+            opts="-R -h --include-remotes --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <NAMES>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -2671,7 +2674,7 @@ _jj() {
             return 0
             ;;
         jj__debug)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help copy-detection fileset index local-working-copy operation view reindex revset snapshot template tree watchman working-copy"
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help copy-detection fileset index init-local local-working-copy operation view reindex revset snapshot template tree watchman working-copy"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -2861,6 +2864,69 @@ _jj() {
             ;;
         jj__debug__index)
             opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --repository)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                -R)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                --at-operation)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --at-op)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --color)
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-toml)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-file)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        jj__debug__init__local)
+            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [DESTINATION]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -4347,7 +4413,7 @@ _jj() {
             return 0
             ;;
         jj__file__annotate)
-            opts="-r -R -h --revision --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <PATH>"
+            opts="-r -T -R -h --revision --template --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <PATH>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -4358,6 +4424,14 @@ _jj() {
                     return 0
                     ;;
                 -r)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --template)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -T)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -5914,69 +5988,6 @@ _jj() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        jj__init)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [DESTINATION]"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --repository)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                -R)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                --at-operation)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --at-op)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --color)
-                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-toml)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-file)
-                    local oldifs
-                    if [ -n "${IFS+x}" ]; then
-                        oldifs="$IFS"
-                    fi
-                    IFS=$'\n'
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    if [ -n "${oldifs+x}" ]; then
-                        IFS="$oldifs"
-                    fi
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o filenames
-                    fi
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
         jj__interdiff)
             opts="-f -t -s -w -b -R -h --from --to --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
@@ -7253,69 +7264,6 @@ _jj() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        jj__revert)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [ARGS]..."
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --repository)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                -R)
-                    COMPREPLY=()
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o plusdirs
-                    fi
-                    return 0
-                    ;;
-                --at-operation)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --at-op)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --color)
-                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-toml)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-file)
-                    local oldifs
-                    if [ -n "${IFS+x}" ]; then
-                        oldifs="$IFS"
-                    fi
-                    IFS=$'\n'
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    if [ -n "${oldifs+x}" ]; then
-                        IFS="$oldifs"
-                    fi
-                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
-                        compopt -o filenames
-                    fi
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
         jj__root)
             opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
@@ -7478,6 +7426,81 @@ _jj() {
                     return 0
                     ;;
                 --context)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --repository)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                -R)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                --at-operation)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --at-op)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --color)
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-toml)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-file)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        jj__sign)
+            opts="-r -R -h --revisions --key --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --revisions)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -r)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --key)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -8323,6 +8346,77 @@ _jj() {
             case "${prev}" in
                 --what)
                     COMPREPLY=($(compgen -W "repo remote-tracking" -- "${cur}"))
+                    return 0
+                    ;;
+                --repository)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                -R)
+                    COMPREPLY=()
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o plusdirs
+                    fi
+                    return 0
+                    ;;
+                --at-operation)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --at-op)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --color)
+                    COMPREPLY=($(compgen -W "always never debug auto" -- "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-toml)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-file)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        jj__unsign)
+            opts="-r -R -h --revisions --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --revisions)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -r)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 --repository)
