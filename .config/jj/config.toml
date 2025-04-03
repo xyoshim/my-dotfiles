@@ -65,6 +65,9 @@ frootlog=["log", "-T", "builtin_log_compact_full_description", "-r", "root()::"]
 # # To install the latest release
 # cargo install --locked --bin jj jj-cli
 #
+# # To install the tag version
+# cargo install --git https://github.com/jj-vcs/jj --tag v0.28.0 --bin jj jj-cli
+#
 # <https://zenn.dev/zetamatta/books/c1e309aea68960/viewer/07_git>
 # # 既存のgitリポジトリをクローンする
 #   jj git clone https://github.com/hymkor/go-htnblog.git
