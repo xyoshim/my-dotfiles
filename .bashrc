@@ -42,17 +42,17 @@ fi
 # Functions
 #
 # Some people use a different file for functions
-## Load bash functions
-for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}" "${XDG_CONFIG_HOME-${HOME}/.config/bash}" "${HOME}"; do
-  if [ "${d}" ] && [ -f "${d}/.bash_functions" ]; then
-    . "${d}/.bash_functions"
-    break
-  fi
-done
 ## Load shell common functions
 for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/sh}" "${XDG_CONFIG_HOME-${HOME}/.config/sh}" "${HOME}"; do
   if [ "${d}" ] && [ -f "${d}/.sh_functions" ]; then
     . "${d}/.sh_functions"
+    break
+  fi
+done
+## Load bash functions
+for d in "${XDG_CONFIG_HOME+${XDG_CONFIG_HOME}/bash}" "${XDG_CONFIG_HOME-${HOME}/.config/bash}" "${HOME}"; do
+  if [ "${d}" ] && [ -f "${d}/.bash_functions" ]; then
+    . "${d}/.bash_functions"
     break
   fi
 done
