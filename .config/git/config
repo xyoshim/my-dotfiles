@@ -12,8 +12,11 @@
 [alias]
 	co = checkout
 	ci = commit
+	cm = commit
 	st = status
+	stt = status -uno
 	graphlog = log --pretty='format:%C(auto)%h %as%d %s' --date=local --graph
+	grlog = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
 	changelog = log --pretty='format:%C(auto)%as  %an <%ae>%n  * %s%n' --date=local
 	chp = cherry-pick
 	dlg = log --date=local --graph
@@ -21,13 +24,22 @@
 	cfp = cat-file -p
 	sha1-short7 = rev-parse --short=7
 	sha1-short7-head = rev-parse --short=7 HEAD
+	difff = diff --word-diff
+	# ref https://qiita.com/mizchi/items/dcdc57f748a1d6cc3648
+	delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
 [color]
 	ui = auto
 [rerere]
 	enabled = true
+	autoupdate = true
 [credential "https://github.com"]
 	helper =
-	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+	helper = !'C:/Program Files/GitHub CLI/gh.exe' auth git-credential
 [credential "https://gist.github.com"]
 	helper =
-	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+	helper = !'C:/Program Files/GitHub CLI/gh.exe' auth git-credential
