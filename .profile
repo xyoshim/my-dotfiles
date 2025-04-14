@@ -78,8 +78,6 @@ for TMP_PREFIX_PATH in ${PREFIXS}; do
     fi
   done
 done
-export MANPATH="$(echo ":${MANPATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
-export INFOPATH="$(echo ":${INFOPATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
 unset TMP_PATH TMP_PREFIX_PATH TMP_SUFFIX_PATH PREFIXS
 
 # path of dotnet
@@ -203,5 +201,7 @@ fi
 LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
 LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
 
-# Remove unnecessary ':' in PATH
+# Remove unnecessary ':' in *PATH
 export PATH="$(echo ":${PATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
+export MANPATH="$(echo ":${MANPATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
+export INFOPATH="$(echo ":${INFOPATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
