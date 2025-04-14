@@ -199,7 +199,7 @@ fi
 
 # history file of less
 LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
-LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
+export LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
 
 # Remove unnecessary ':' in *PATH
 export PATH="$(echo ":${PATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
