@@ -113,6 +113,12 @@ if [ -n "$DOTNET_TOOLS_PATH" ]; then
   export PATH="${DOTNET_TOOLS_PATH}:${PATH}"
 fi
 
+# Set XDG Base Directories
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
+
 # Load shell common functions
 if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions" ]; then
   . "${XDG_CONFIG_HOME:-${HOME}/.config}/sh/.sh_functions"
@@ -137,12 +143,6 @@ case "${OSTYPE_LOWER}" in
   *)
     ;;
 esac
-
-# Set XDG Base Directories
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
 
 # If not running interactively, return here.
 case "$-" in
@@ -201,7 +201,7 @@ fi
 
 # history file of less
 LESSHISTFILE="${XDG_STATE_HOME+${XDG_STATE_HOME}/lesshst}"
-LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
+export LESSHISTFILE="${LESSHISTFILE:-${HOME}/.lesshst}"
 
 # Remove unnecessary ':' in PATH
 export PATH="$(echo ":${PATH}:" | /usr/bin/sed -E 's|:+|:|g' | /usr/bin/sed -e 's|^:||' -e 's|:$||')"
