@@ -1,4 +1,6 @@
 #
+# Remove Windows paths that interfere with Git Bash
+#
 TMP_PATH=$(echo :"${PATH}": | sed \
   -e 's|:/c/[Ww][Ii][Nn][Ds][Oo][Ww][Ss]/System32/OpenSSH:|:|g' \
   -e 's|:/c/Strawberry/perl/bin:|:|g' \
