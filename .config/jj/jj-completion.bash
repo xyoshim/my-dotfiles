@@ -7461,7 +7461,7 @@ _jj() {
             return 0
             ;;
         jj__show)
-            opts="-r -T -s -R -h --template --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [REVSET]"
+            opts="-r -T -s -R -h --template --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --no-patch --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [REVSET]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
