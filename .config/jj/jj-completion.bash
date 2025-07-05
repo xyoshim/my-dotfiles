@@ -2456,7 +2456,7 @@ _jj() {
             return 0
             ;;
         jj__debug__revset)
-            opts="-R -h --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <REVISION>"
+            opts="-R -h --no-resolve --no-optimize --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help <REVISION>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -3181,7 +3181,7 @@ _jj() {
             return 0
             ;;
         jj__diff)
-            opts="-r -f -t -s -w -b -R -h --revisions --from --to --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
+            opts="-r -f -t -T -s -w -b -R -h --revisions --from --to --template --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help [FILESETS]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -3208,6 +3208,14 @@ _jj() {
                     return 0
                     ;;
                 -t)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --template)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -T)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -3529,13 +3537,13 @@ _jj() {
             return 0
             ;;
         jj__evolog)
-            opts="-r -n -T -p -s -R -h --revision --limit --reversed --no-graph --template --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
+            opts="-r -n -T -p -s -R -h --revisions --limit --reversed --no-graph --template --patch --summary --stat --types --name-only --git --color-words --tool --context --ignore-all-space --ignore-space-change --repository --ignore-working-copy --ignore-immutable --at-op --at-operation --debug --color --quiet --no-pager --config --config-toml --config-file --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --revision)
+                --revisions)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
