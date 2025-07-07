@@ -27,6 +27,7 @@
 	# ref https://qiita.com/mizchi/items/dcdc57f748a1d6cc3648
 	delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 [diff]
+	context = 5
 	algorithm = histogram
 	colorMoved = plain
 	mnemonicPrefix = true
@@ -36,6 +37,24 @@
 [rerere]
 	enabled = true
 	autoupdate = true
+[push]
+	autoSetupRemote = true
+[pull]
+	# Create merge commits by default (git pull --no-rebase).
+	# A safe default to avoid the risk of accidentally rewriting
+	# the history of a shared branch.
+	# To base a rebase, use `git pull --rebase` or change
+	# this value to `true`.
+	rebase = false
+[fetch]
+	prune = true
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
