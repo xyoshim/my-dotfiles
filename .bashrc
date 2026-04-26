@@ -144,16 +144,19 @@ else
   fi
 fi
 if [ "${_have__git_ps1}" = "yes" ]; then
-  case "${OSTYPE_LOWER}" in
+  _ostype_uname="$(get_ostype)"
+  [ "$_ostype_uname" = "unknown" ] && _ostype_uname=""
+  _ostype_uname_lower=$(get_lower_case "$_ostype_uname")
+  case "${_ostype_uname_lower:-${OSTYPE_LOWER}}" in
     msys*|mingw*)
       if [ "$color_prompt" = yes ]; then
         PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\[\033[32m\]\u@\h \[\033[35m\]'
-        PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \[\033[33m\]\w\[\033[36m\]'
+        PS1="${PS1}"'${_ostype_uname:-${OSTYPE}}${MSYSTEM+\[\033[36m\](${MSYSTEM})} \[\033[33m\]\w\[\033[36m\]'
         PS1="${PS1}"'`__git_ps1`'
         PS1="${PS1}"'\[\033[0m\]\n$ '
       else
         PS1='$TITLEPREFIX:$PWD \u@\h '
-        PS1="${PS1}"'${MSYSTEM:-${OSTYPE}} \w'
+        PS1="${PS1}"'${_ostype_uname:-${OSTYPE}}${MSYSTEM+\[\033[36m\](${MSYSTEM})} \w'
         PS1="${PS1}"'`__git_ps1`'
         PS1="${PS1}"'\n$ '
       fi
@@ -161,11 +164,11 @@ if [ "${_have__git_ps1}" = "yes" ]; then
     *)
       if [ "$color_prompt" = yes ]; then
         PS1='${debian_chroot:+($debian_chroot)}\[\e]0;\w\a\]\[\e[32m\]\u@\h'
-        [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"' \[\033[35m\]${MSYSTEM:-${OSTYPE}} '
+        [ -n "${_ostype_uname:-${OSTYPE}}" ] && PS1="${PS1}"' \[\033[35m\]${_ostype_uname:-${OSTYPE}} '
         PS1="${PS1}"'\[\e[33m\]\w\[\033[31m\]$(__git_ps1)\[\e[0m\]\n\$ '
       else
         PS1='${debian_chroot:+($debian_chroot)}\u@\h'
-        [ -n "${MSYSTEM:-${OSTYPE}}" ] && PS1="${PS1}"' ${MSYSTEM:-${OSTYPE}} '
+        [ -n "${_ostype_uname:-${OSTYPE}}" ] && PS1="${PS1}"' ${_ostype_uname:-${OSTYPE}} '
         PS1="${PS1}"'\w$(__git_ps1)\n\$ '
       fi
     ;;
