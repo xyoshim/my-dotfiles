@@ -4,24 +4,44 @@
 [ "$LOADED_HOME_SH_FUNCTIONS" = "yes" ] && return
 LOADED_HOME_SH_FUNCTIONS=yes
 
+# get lower case
+get_lower_case() {
+  if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+    echo "${1,,}"
+  else
+    echo "$(echo "$1" | tr '[:upper:]' '[:lower:]' 2> /dev/null)"
+  fi
+}
+
 # get OSTYPE
 get_ostype() {
-  if _ostype="$(uname -o 2> /dev/null)"; then
+  if _ostype="$(uname -s 2> /dev/null)"; then
     :
-  elif _ostype="$(uname -s 2> /dev/null)"; then
+  elif _ostype="$(uname -o 2> /dev/null)"; then
     :
   else
     _ostype="${OS:-unknown}"
   fi
+  case "${_ostype}" in
+    MINGW*)
+      _ostype="MinGW"
+      ;;
+    MSYS*)
+      _ostype="Msys"
+      ;;
+    CYGWIN*)
+      _ostype="Cygwin"
+      ;;
+    *)
+      ;;
+  esac
   echo "${_ostype}"
   unset _ostype
 }
 
 # get OSTYPE lower case
 get_ostype_lower() {
-  _ostype="${OSTYPE:-$(get_ostype)}"
-  echo "$(echo "${_ostype}" | tr [:upper:] [:lower:] 2> /dev/null)"
-  unset _ostype
+  get_lower_case "${OSTYPE:-$(get_ostype)}"
 }
 
 # Shell dependent settings from $1/*.$2
