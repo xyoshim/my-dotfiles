@@ -17,6 +17,9 @@ TMP_PATH=$(echo ":${PATH}:" | sed \
   -e 's|:/cygdrive/c/Program Files/LLVM/bin:|:|g' \
   -e 's|:/cygdrive/c/Program Files/Git/cmd:|:|g' \
   -e 's|:/cygdrive/c/Program Files/CMake/bin:|:|g' \
+  -e 's|:/cygdrive/c/Program Files/coreutils:|:|g' \
+  -e 's|:/cygdrive/c/Program Files/coreutils/bin:|:|g' \
+  -e 's|:/cygdrive/c/Program Files/coreutils/cmd:|:|g' \
   -e "s|:/cygdrive/c/Users/${USERNAME:-${USER}}/AppData/Local/Microsoft/WindowsApps:|:|g" \
   -e "s|:/cygdrive/c/Users/${USERNAME:-${USER}}/AppData/Local/Android/Sdk/platform-tools:|:|g" \
   -e "s|:/cygdrive/c/Users/${USERNAME:-${USER}}/AppData/Local/Programs/Microsoft VS Code/bin:|:|g" \
