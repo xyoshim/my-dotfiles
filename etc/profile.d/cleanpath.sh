@@ -9,6 +9,9 @@ TMP_PATH=$(echo ":${PATH}:" | sed \
   -e 's|:/c/Strawberry/perl/site/bin:|:|g' \
   -e 's|:/c/Strawberry/c/bin:|:|g' \
   -e 's|:/c/Program Files/Git/cmd:|:|g' \
+  -e 's|:/c/Program Files/coreutils:|:|g' \
+  -e 's|:/c/Program Files/coreutils/bin:|:|g' \
+  -e 's|:/c/Program Files/coreutils/cmd:|:|g' \
 )
 
 # Clean up the PATH:
