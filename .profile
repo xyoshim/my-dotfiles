@@ -125,6 +125,7 @@ elif [ -f "${HOME}/.sh_functions" ]; then
 fi
 
 # set OSTYPE, when unset
+[ "${OSTYPE}" = "cygwin" ] && unset OSTYPE OSTYPE_LOWER
 export OSTYPE="${OSTYPE:-$(get_ostype)}"
 export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
 
