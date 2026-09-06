@@ -113,6 +113,7 @@ fi
 # set prompt
 export -n PS1
 unset PS1
+[ "${OSTYPE}" = "cygwin" ] && unset OSTYPE OSTYPE_LOWER
 export OSTYPE="${OSTYPE:-$(get_ostype)}"
 export OSTYPE_LOWER="${OSTYPE_LOWER:-$(get_ostype_lower)}"
 
